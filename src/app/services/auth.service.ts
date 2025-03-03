@@ -23,7 +23,7 @@ export class AuthService {
         "password": password
       }
     }
-    let contentHeader = new HttpHeaders({ "Content-Type":"application/json" });
+    let contentHeader = new HttpHeaders({ "Content-Type":"application/json","company-name":  localStorage.getItem('comp_db') || '' });
     return this.http.post<any>(this.baseurl+'/users/sign_in', data, { headers: contentHeader, observe: 'response' })
   }
   // working fine --- for registering user
@@ -46,7 +46,8 @@ export class AuthService {
   logout_api(token:any){
   return  this.http.delete(this.baseurl+"/users/sign_out",{
       headers: new HttpHeaders({
-        "Authorization": `${token}`
+        "Authorization": `${token}`,
+        "company-name":  localStorage.getItem('comp_db') || ''
       })
     })
   }

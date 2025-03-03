@@ -33,9 +33,6 @@ export class LoginComponent implements OnInit {
   ){ }
   ngOnInit(): void {
 
-    this.dashapi.sendingCompany().subscribe(res =>{
-      console.log("company", res)
-    })
 
 
       this.loginForm = this.load_form()
@@ -47,6 +44,7 @@ export class LoginComponent implements OnInit {
   }
   load_form(){
     return this.fb.group({
+      company: this.fb.control('', [Validators.required]),
       email: this.fb.control('', [Validators.required, Validators.email]),
       password: this.fb.control('', [Validators.required]),
       show_pass: this.fb.control(null),
@@ -57,16 +55,24 @@ export class LoginComponent implements OnInit {
     e.preventDefault()
     this.hide = !this.hide;
   }
+  setDatabase(e:any){
+    // this.dashapi.sendingCompany(e.value).subscribe(res =>{
+      localStorage.setItem('comp_db', e.value)
+    // })
+
+  }
    login(){
     let email = this.loginForm.get('email')?.value
     let password = this.loginForm.get('password')?.value
+
     this.auth.login_api(email,password).subscribe((res:any)=>{
 
         let token_string = JSON.stringify(res.headers.get('Authorization'))
         let current_user = JSON.stringify(res)
         localStorage.setItem('current_user', current_user)
+
         localStorage.setItem('token',token_string)
-        this.helper.navigateAndActive(this.layout.menus(),'Dashboard', 'dashboard/stock-summery/1', this.router, this.layout)
+        this.helper.navigateAndActive(this.layout.menus(),'Orders', 'accounting/orders/1', this.router, this.layout)
 
         // this.router.navigate(['dashboard/stock-summery/1'])
 

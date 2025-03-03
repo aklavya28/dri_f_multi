@@ -232,7 +232,7 @@ export class LayoutComponent  implements OnInit{
   //   });
   // }
   logout(){
-    console.log("dsfsdf")
+
     this.api.logout_api(this.helper.get_local('token')).subscribe((res) =>{ })
     localStorage.clear()
     this.router.navigateByUrl('login')

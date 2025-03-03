@@ -15,7 +15,22 @@
             <form [formGroup]="loginForm" (submit)="login()" >
 
                 <div>
+                    <div>
+                        <mat-form-field appearance="outline">
+                            <mat-label>Choose Company</mat-label>
+                            <mat-select
+                            formControlName="company"
+                            (selectionChange)="setDatabase($event)"
+                             >
 
+                             <mat-option value="company1">Dev Rising</mat-option>
+                             <mat-option value="company2">Him</mat-option>
+                          </mat-select>
+                          @if (loginForm.get('company')?.hasError('required')) {
+                              <mat-error>Field is <strong>required</strong></mat-error>
+                            }
+                          </mat-form-field>
+                    </div>
                     <div>
                         <mat-form-field class="example-full-width" appearance="outline">
 
