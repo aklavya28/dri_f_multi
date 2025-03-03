@@ -1,0 +1,99 @@
+<div class="page_wrapper">
+    <div class="heading_with_btn">
+        <div>
+            <h1 class="heading1"> Company <strong>Trial Balance</strong></h1>
+        </div>
+        <!-- <div>
+            <button mat-raised-button color="primary" (click)="routeToNew()"> <mat-icon>add</mat-icon>Employee</button>
+        </div> -->
+    </div>
+    <div class="search_form">
+        <div>
+            <form [formGroup]="trialSearchForm" (submit)="submit()">
+
+                <div>
+                    <mat-form-field appearance="outline">
+                        <mat-label>Enter a date range</mat-label>
+                        <mat-date-range-input  [rangePicker]="picker">
+                          <input matStartDate formControlName="start" placeholder="Start date">
+                          <input matEndDate formControlName="end" placeholder="End date">
+                        </mat-date-range-input>
+                        <mat-hint>MM/DD/YYYY – MM/DD/YYYY</mat-hint>
+                        <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+                        <mat-date-range-picker #picker></mat-date-range-picker>
+
+                        @if (trialSearchForm.get("start")?.hasError('matStartDateInvalid')) {
+                          <mat-error>Invalid start date</mat-error>
+                        }
+                        @if (trialSearchForm.get("end")?.hasError('matEndDateInvalid')) {
+                          <mat-error>Invalid end date</mat-error>
+                        }
+                      </mat-form-field>
+                </div>
+
+
+                <button mat-fab color="primary"
+                    type="submit"
+                    [disabled]="trialSearchForm.status == 'INVALID' "
+                >
+                <mat-icon >search</mat-icon>
+                </button>
+            </form>
+
+        </div>
+    </div>
+    <div *ngIf="is_sppiner">
+        <div style="position: relative; height: 400px;"> <ngx-spinner bdColor = "rgba(75, 221, 50, 0.8)" color = "#fff" [fullScreen]="false" class="spinner_custom" type="square-jelly-box"></ngx-spinner>
+        </div>
+      </div>
+    <h3 *ngIf="data.length" class="heading_h3">Trial balance From <span>{{start_date | date}}</span> To <span>{{end_date | date}}</span></h3>
+    <div  *ngIf="!is_sppiner" class="inner_page_table table-responsive">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Name</th>
+                    <th scope="col">Type</th>
+                    <th scope="col">Opening</th>
+                    <th scope="col">Debit</th>
+                    <th scope="col">Credit</th>
+                    <th scope="col">Closing</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (data.length) {
+                    @for (item of data; track $index) {
+
+                        <tr class="{{!item.salary_settings ? 'red': ''}}">
+                            <td>{{$index+1}}</td>
+                            <!-- <td></td> -->
+                            <td>
+                                <a [routerLink]="['/accounting/ledgers/', item.slug,1]">
+                                    <strong>{{item.l_name | uppercase}}</strong>
+                                </a>
+                            </td>
+                            <td>{{item.l_type}}</td>
+                            <td>{{item.open_bal | currency:"INR" }}</td>
+                            <td>{{item.debit | currency:"INR"}}</td>
+                            <td>{{item.credit | currency:"INR"}}</td>
+                            <td>{{item.close_bal | currency:"INR"}}</td>
+                        </tr>
+                    }
+                }
+
+
+
+            </tbody>
+            <tfoot>
+                <tr>
+                    <th colspan="3"></th>
+                    <th >{{open_bal | currency:"INR"}}</th>
+                    <th >{{dr_sum | currency:"INR"}}</th>
+                    <th >{{cr_sum | currency:"INR"}}</th>
+                    <th >{{close_bal | currency:"INR"}}</th>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+</div>
+

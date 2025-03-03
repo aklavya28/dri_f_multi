@@ -1,0 +1,22 @@
+<ul id="accordion" class="accordion" >
+  <li *ngFor="let menu of menus; let i = index"
+    [class.active]="menu.active">
+    <div class="menu" (click)="toggle(i)">
+      <!-- <i [class]="menu.iconClass"></i> -->
+      <span *ngIf="menu.iconUrl"  class="image_icon">
+        <img [src]="'assets/icons/'+menu.iconUrl" alt="">
+      </span>
+      <h2>{{ menu.name }}</h2>
+      <i class="fa fa-chevron-down"></i>
+    </div>
+    <!-- <ul class="submenu" #submenu [style.height.px]="menu.active ? submenu.scrollHeight : 0"> -->
+      <!-- {{menu.active}} -->
+    <ul class="submenu" #submenu [ngClass]="menu.active ? 'main_active' : ''">
+    <!-- <ul class="submenu" #submenu style="height: auto;"> -->
+      <li *ngFor="let submenu of menu.submenu" (click) ="addactive(submenu )"  >
+
+        <a [ngClass]="submenu.isActive ? 'active' : ''" [routerLink]="submenu.url">{{ submenu.name }}</a>
+      </li>
+    </ul>
+  </li>
+</ul>

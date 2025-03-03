@@ -1,0 +1,51 @@
+.top_fields {
+    // background: white;
+    // padding: 11px;
+    // border-radius: 10px;
+    // margin-bottom: 27px;
+
+    background: #fff;
+    padding: 15px 15px 0;
+    border-radius: 4px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2784313725);
+    // display: flex;
+    // gap: 10PX;
+    margin-bottom: 30px;
+    // flex-flow: row wrap;
+}
+
+
+
+.debit_area {
+    background: white;
+    padding: 23px 10px 15px;
+    position: relative;
+    margin-bottom: 30px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2784313725);
+    border-radius: 5px;
+    border: 1px solid #c7c7c7;
+}
+
+.debit_area>h3 {
+    position: absolute;
+    top: -5px;
+    left: 36px;
+    font-size: 21px;
+    width: 59px;
+    background: white;
+    height: 12px;
+}
+
+.debit_area>h3>span {
+    position: absolute;
+    top: -10px;
+}
+
+.debit_area>div>div {
+    display: flex;
+    gap: 10px;
+}
+
+mat-form-field {
+    min-width: 320px !important;
+}

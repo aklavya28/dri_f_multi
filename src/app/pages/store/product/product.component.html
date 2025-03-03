@@ -1,0 +1,183 @@
+
+<div class="page_wrapper">
+  <div class="header">
+      <div class="back_with_title">
+        <div class="backbutton">
+          <a mat-fab color="primary" [routerLink]="'/store/all-products'">
+          <mat-icon>arrow_back</mat-icon>
+        </a>
+      </div>
+      <div class="heading_with_btn action_icon">
+        <div><h1 class="heading1"> New <strong>Product</strong> </h1></div>
+            <div><button class="btn_pink" mat-mini-fab matTooltip="Add New Category" (click)="navigate_to()"><mat-icon>add</mat-icon> </button>
+          </div>                                                                                                                                                                                                                                                                                                                   </div>
+      </div>
+  </div>
+
+  <div class="main_container">
+    <form *ngIf="categories" [formGroup]="newProductForm" (submit)="submit()">
+
+     <!-- {{newProductForm.get('testing')?.errors | json}} -->
+       <div class="field_area" >
+          <input type="hidden" formControlName="category_id" style="display: none;">
+          <div>
+            <mat-form-field class="example-full-width with_link" appearance="outline">
+              <mat-label>Choose Category</mat-label>
+              <input type="text"
+                     placeholder="Pick one"
+                     aria-label="Number"
+                     formControlName="testing"
+                     matInput
+
+
+                     [matAutocomplete]="auto">
+              <mat-autocomplete #auto (optionSelected)="onOptionSelect($event.option.value)">
+                @for (option of filteredCat | async; track option) {
+                  <mat-option  [value]="option.name+','+option.id">{{option.name  | uppercase}}</mat-option>
+
+                }
+
+              </mat-autocomplete>
+              @if (newProductForm.get('testing')?.hasError('required')) {
+                <mat-error>Category is <strong>required</strong></mat-error>
+              }
+              @if (newProductForm.get('testing')?.hasError('match')) {
+                <mat-error>No Category is <strong>selected</strong></mat-error>
+              }
+            </mat-form-field>
+
+          </div>
+          <div>
+              <mat-form-field appearance="outline">
+                  <mat-label>Product Name</mat-label>
+                  <input matInput
+                  formControlName="name"
+                  maxlength="50"
+                  [errorStateMatcher]="matcher"
+                  >
+                  @if(newProductForm.get('name')?.hasError('required')) {
+                      <mat-error>Product name is <strong>required</strong></mat-error>
+                    }
+                  @if(newProductForm.get('name')?.hasError('minlength')) {
+                      <mat-error>Minimum 3 <strong>Characters</strong></mat-error>
+                    }
+                    @if(newProductForm.get('name')?.hasError('maxlength')) {
+                      <mat-error>Maximum 50 <strong>Characters</strong></mat-error>
+                    }
+              </mat-form-field>
+          </div>
+          <div>
+              <mat-form-field appearance="outline">
+                  <mat-label>HSN/SAC</mat-label>
+                  <input matInput
+                  formControlName="hsn_sac"
+                  [errorStateMatcher]="matcher"
+                  >
+                  @if(newProductForm.get('hsn_sac')?.hasError('required')) {
+                      <mat-error>Product name is <strong>required</strong></mat-error>
+                    }
+                  @if(newProductForm.get('hsn_sac')?.hasError('pattern')) {
+                      <mat-error>Only valid <strong>Characters</strong></mat-error>
+                    }
+              </mat-form-field>
+          </div>
+          <div>
+              <mat-form-field appearance="outline">
+                  <mat-label>Part No / Unique No</mat-label>
+                  <input matInput
+                  formControlName="part_no"
+                  [errorStateMatcher]="matcher"
+                  >
+
+              </mat-form-field>
+          </div>
+        </div>
+        <div class="field_area" >
+          <div>
+              <mat-form-field class="textarea" appearance="outline">
+                  <mat-label>Description </mat-label>
+                  <textarea matInput
+                      formControlName="description"
+                      maxlength="100"
+                      [errorStateMatcher]="matcher"
+                  ></textarea>
+                  @if(newProductForm.get('description')?.hasError('required')) {
+                      <mat-error>Product description is <strong>required</strong></mat-error>
+                    }
+                    @if(newProductForm.get('description')?.hasError('minlength')) {
+                      <mat-error>Minimum 3 <strong>Characters</strong></mat-error>
+                    }
+                    @if(newProductForm.get('description')?.hasError('maxlength')) {
+                      <mat-error>Maximum 100 <strong>Characters</strong></mat-error>
+                    }
+                </mat-form-field>
+          </div>
+        </div>
+        <div class="field_area" >
+          <div>
+            <mat-form-field appearance="outline">
+              <mat-label>Choose Unit Type</mat-label>
+              <mat-select
+              formControlName="qty_unit"
+              [errorStateMatcher]="matcher"
+               >
+              @for (item of units; track $index) {
+                <mat-option [value]="item">{{item | uppercase}}</mat-option>
+              }
+               <!-- <mat-option value="dozen">Dozen</mat-option>
+               <mat-option value="unit">Unit</mat-option>
+               <mat-option value="Kg">Kg</mat-option>
+               <mat-option value="Grams">Grams</mat-option>
+               <mat-option value="meter">Meter</mat-option>
+               <mat-option value="foot">Foot</mat-option>
+               <mat-option value="inch">Inch</mat-option>
+               <mat-option value="millimetre">Millimetre</mat-option>
+               <mat-option value="litre">Litre</mat-option>
+               <mat-option value="Millilitre">millilitre</mat-option> -->
+
+            </mat-select>
+            @if (newProductForm.get('qty_unit')?.hasError('required')) {
+                <mat-error>Product unit is <strong>required</strong></mat-error>
+              }
+
+            </mat-form-field>
+          </div>
+          <div>
+            <mat-form-field appearance="outline">
+              <mat-label>GST <sup>%</sup></mat-label>
+              <input matInput
+              formControlName="gst"
+              type="number"
+              [errorStateMatcher]="matcher"
+              >
+              @if(newProductForm.get('gst')?.hasError('required')) {
+                  <mat-error>GST is <strong>required</strong></mat-error>
+                }
+                @if(newProductForm.get('gst')?.hasError('pattern')) {
+                    <mat-error>Only valid <strong>Digits</strong></mat-error>
+                  }
+                  @if(newProductForm.get('gst')?.hasError('min')) {
+                    <mat-error>Minmum <strong>1%</strong></mat-error>
+                  }
+                  @if(newProductForm.get('gst')?.hasError('max')) {
+                    <mat-error>Maximum <strong>50%</strong></mat-error>
+                  }
+              </mat-form-field>
+          </div>
+
+        </div>
+
+        <!-- <button mat-button type="submit">Basic</button> -->
+        <button mat-raised-button color="primary"
+          type="submit"
+          [disabled]="this.newProductForm.status == 'INVALID'"
+        >SAVE</button>
+        <!-- {{newProductForm.value | json}} -->
+      </form>
+  </div>
+
+</div>
+
+
+
+

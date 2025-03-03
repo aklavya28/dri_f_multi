@@ -1,0 +1,89 @@
+<div class="page_wrapper">
+    <div class="heading_with_btn">
+        <div>
+            <h1 class="heading1"> Company <strong>Daybook</strong></h1>
+        </div>
+        <!-- <div>
+            <button mat-raised-button color="primary" (click)="routeToNew()"> <mat-icon>add</mat-icon>Employee</button>
+        </div> -->
+    </div>
+    <div class="search_form">
+        <div>
+            <form [formGroup]="daybookSearchForm" (submit)="submit()">
+
+                <div>
+                    <mat-form-field class="example-full-width">
+                        <mat-label>Choose a date</mat-label>
+                        <input matInput [matDatepicker]="picker"
+                        [max]="getToday()"
+                        formControlName="date"
+                        >
+                        <mat-hint>MM/DD/YYYY</mat-hint>
+                        <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+                        <mat-datepicker touchUi #picker></mat-datepicker>
+                        @if(daybookSearchForm.get('date')?.hasError('required')) {
+                            <mat-error>Date is <strong>required</strong></mat-error>
+                          }
+                        @if(daybookSearchForm.get('date')?.hasError('dateGreaterThanToday')) {
+                                        <mat-error> Date cannot be greater than <strong>today</strong></mat-error>
+                            }
+                      </mat-form-field>
+                </div>
+
+
+
+                <button mat-fab color="primary"
+                    type="submit"
+                    [disabled]="daybookSearchForm.status == 'INVALID' "
+                >
+                <mat-icon >search</mat-icon>
+                </button>
+            </form>
+
+        </div>
+    </div>
+    <div *ngIf="is_sppiner">
+        <div style="position: relative; height: 400px;"> <ngx-spinner bdColor = "rgba(75, 221, 50, 0.8)" color = "#fff" [fullScreen]="false" class="spinner_custom" type="square-jelly-box"></ngx-spinner>
+        </div>
+      </div>
+    <h3 *ngIf="data.length" class="heading_h3">Daybook for <span>{{start_date | date}}</span> </h3>
+    <div *ngIf="!is_sppiner" class="inner_page_table table-responsive">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Name</th>
+                    <th scope="col">Type</th>
+                    <th scope="col">Opening</th>
+                    <th scope="col">Closing</th>
+                    <th scope="col">Today</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (data.length) {
+                    @for (item of data; track $index) {
+
+                        <tr class="{{!item.salary_settings ? 'red': ''}}">
+                            <td>{{$index+1}}</td>
+                            <!-- <td></td> -->
+                            <td>
+                                <a [routerLink]="['/accounting/ledgers/', item.slug,1]">
+                                    <strong>{{item.l_name | uppercase}}</strong>
+                                </a>
+                            </td>
+                            <td>{{item.l_type}}</td>
+                            <td>{{item.open_bal | currency:"INR" }}</td>
+                            <td>{{item.close_bal | currency:"INR"}}</td>
+                            <td>{{item.day_bal | currency:"INR"}}</td>
+                        </tr>
+                    }
+                }
+
+
+
+            </tbody>
+
+        </table>
+    </div>
+</div>
+

@@ -1,0 +1,215 @@
+<div class="page_wrapper">
+    <div class="heading_with_btn">
+      <div>
+          <h1 class="heading1">Register New <strong>Lender</strong></h1>
+      </div>
+
+  </div>
+
+  <form [formGroup]="newLenderForm"   (submit)="submit()">
+    <div class="input_forms2_main">
+        <div class="c_shadow input_forms2">
+            <h2>Personal Information</h2>
+            <div>
+              <mat-form-field appearance="outline">
+                <mat-label>Account Type</mat-label>
+                <mat-select
+                formControlName="account_type"
+                multiple
+                >
+
+                  <mat-option value="creditor">Sundry Creditor</mat-option>
+                  <mat-option value="debtor">Sundry Debtor</mat-option>
+                  <mat-option value="khata">Khata</mat-option>
+
+              </mat-select>
+              @if (newLenderForm.get('account_type')?.hasError('required')) {
+                  <mat-error>Account Type is <strong>required</strong></mat-error>
+                }
+              </mat-form-field>
+
+            </div>
+            <div>
+                <mat-form-field appearance="outline">
+                    <mat-label>Fullname</mat-label>
+                    <input matInput
+                      formControlName="name"
+                      maxlength="20"
+                    >
+                    @if (newLenderForm.get('name')?.hasError('required')) {
+                      <mat-error> Name is <strong>required</strong></mat-error>
+                    }
+                    @if (newLenderForm.get('name')?.hasError('alphabets')) {
+                      <mat-error> Enter vaild  <strong>characters</strong></mat-error>
+                    }
+                  </mat-form-field>
+            </div>
+            <div>
+                <mat-form-field appearance="outline">
+                    <mat-label>Mobile</mat-label>
+                    <input matInput
+                      formControlName="mobile"
+                      maxlength="10"
+                      minlength="10"
+                    >
+                    @if (newLenderForm.get('mobile')?.hasError('required')) {
+                      <mat-error> Mobile is <strong>required</strong></mat-error>
+                    }
+                    @if (newLenderForm.get('mobile')?.hasError('minlength')) {
+                      <mat-error> Minimum 10 <strong>Digits</strong></mat-error>
+                    }
+                    @if (newLenderForm.get('mobile')?.hasError('invalidDigit')) {
+                      <mat-error> Enter Valid <strong>Digits</strong></mat-error>
+                    }
+                  </mat-form-field>
+            </div>
+            <div>
+              <mat-form-field appearance="outline">
+                  <mat-label>Aadhaar Number</mat-label>
+                  <input matInput
+                    formControlName="aadhar"
+                    maxlength="12"
+                    minlength="12"
+                  >
+                  @if (newLenderForm.get('aadhar')?.hasError('required')) {
+                    <mat-error> Aadhaar is <strong>required</strong></mat-error>
+                  }
+                  @if (newLenderForm.get('aadhar')?.hasError('minlength')) {
+                    <mat-error> Minimum 12 <strong>Digits</strong></mat-error>
+                  }
+                  @if (newLenderForm.get('aadhar')?.hasError('invalidDigit')) {
+                    <mat-error> Enter Valid <strong>Digits</strong></mat-error>
+                  }
+                </mat-form-field>
+          </div>
+            <div>
+                <mat-form-field appearance="outline">
+                    <mat-label>Email</mat-label>
+                    <input type="email" matInput
+                      formControlName="email"
+                    >
+                    @if (newLenderForm.get('email')?.hasError('email')) {
+                      <mat-error>Enter Vaild <strong>Email</strong></mat-error>
+                    }
+                  </mat-form-field>
+            </div>
+
+      </div>
+
+      <div class="c_shadow input_forms2">
+        <h2>Business Information</h2>
+        <div>
+            <mat-form-field appearance="outline">
+                <mat-label>Company Name</mat-label>
+                <input matInput
+                formControlName="company_name"
+                maxlength="30"
+                >
+                @if (newLenderForm.get('company_name')?.hasError('maxlength')) {
+                  <mat-error>Maximum 30 <strong>Characters</strong></mat-error>
+                }
+                @if (newLenderForm.get('company_name')?.hasError('minlength')) {
+                  <mat-error>Minimum 5 <strong>Characters</strong></mat-error>
+                }
+                @if (newLenderForm.get('company_name')?.hasError('alphanumeric')) {
+                  <mat-error>Only Vaild <strong>Alphanumeric</strong></mat-error>
+                }
+              </mat-form-field>
+              <!-- {{newLenderForm.get('company_name')?.errors | json}} -->
+        </div>
+        <div>
+            <mat-form-field appearance="outline">
+                <mat-label>GST</mat-label>
+                <input matInput
+                  formControlName="gst"
+                  maxlength="15"
+
+                >
+               @if (newLenderForm.get('gst')?.hasError('alphanumeric')) {
+                  <mat-error>Only Vaild <strong>Alphanumeric without space</strong></mat-error>
+                }
+                 @if (newLenderForm.get('gst')?.hasError('minlength')) {
+                  <mat-error>Minimum 15 <strong>Characters</strong></mat-error>
+                }
+                @if (newLenderForm.get('gst')?.hasError('maxlength')) {
+                  <mat-error>Maximum 15 <strong>Characters</strong></mat-error>
+                }
+              </mat-form-field>
+        </div>
+        <div>
+            <mat-form-field appearance="outline">
+                <mat-label>Pan</mat-label>
+                <input  matInput
+                formControlName="pan"
+                maxlength="10"
+                >
+                @if (newLenderForm.get('pan')?.hasError('minlength')) {
+                  <mat-error>Minimum 10 <strong>Characters</strong></mat-error>
+                }@if (newLenderForm.get('pan')?.hasError('invalidPan')) {
+                  <mat-error>Enter valid and uppercase <strong>Pan number</strong></mat-error>
+                }
+
+              </mat-form-field>
+        </div>
+        <div>
+            <mat-form-field appearance="outline">
+                <mat-label>Tan</mat-label>
+                <input  matInput
+                  formControlName="tan"
+                  maxlength="10"
+                >
+
+                @if (newLenderForm.get('tan')?.hasError('required')) {
+                  <mat-error>Only Vaild <strong>Alphanumeric</strong></mat-error>
+                }
+                 @if (newLenderForm.get('tan')?.hasError('minlength')) {
+                  <mat-error>Minimum 10 <strong>Characters</strong></mat-error>
+                }@if (newLenderForm.get('tan')?.hasError('alphanumeric')) {
+                  <mat-error>Only Vaild <strong>Alphanumeric without space</strong></mat-error>
+                }
+              </mat-form-field>
+        </div>
+
+      </div>
+      <div class="c_shadow input_forms2">
+        <h2>Address</h2>
+        <div>
+            <mat-form-field appearance="outline">
+                <mat-label>Address</mat-label>
+                <textarea
+                  matInput
+                  formControlName="address"
+                  maxlength="70"
+
+                  ></textarea>
+                @if (newLenderForm.get('address')?.hasError('required')) {
+                  <mat-error>Address is <strong>required</strong></mat-error>
+                }@if (newLenderForm.get('address')?.hasError('maxlength')) {
+                  <mat-error>Maximum 70 <strong>Characters</strong></mat-error>
+                }
+              </mat-form-field>
+        </div>
+      </div>
+    </div>
+    <div *ngIf="api_validation.length" class="error">
+      <p *ngFor="let item of api_validation"> {{item}}</p>
+    </div>
+    <div class="button_area">
+        <button mat-raised-button color="primary"
+        type="submit"
+      >SAVE</button>
+      <button mat-raised-button color="primary"
+        type="submit"
+        [disabled]="this.newLenderForm.status == 'INVALID'"
+      >SAVE</button>
+    </div>
+    <!-- {{newLenderForm.value | json}} -->
+
+
+
+
+
+  </form>
+</div>
+
+

@@ -1,0 +1,193 @@
+<div class="page_wrapper">
+    <h1>Employee<strong> Profile</strong></h1>
+    <div class="profile_area">
+        <div>
+            <mat-accordion multi="true">
+                <mat-expansion-panel [expanded]="true" >
+                <mat-expansion-panel-header>
+                    <mat-panel-title>
+                    Personal Information
+                    </mat-panel-title>
+                </mat-expansion-panel-header>
+                @if(profile){
+                    <div class="personal_info">
+                        <div>
+                            <div>Name</div>
+                            <div>{{profile.full_name}}</div>
+                        </div>
+                        <div>
+                            <div>Father Name</div>
+                            <div>{{profile.fathername}}</div>
+                        </div>
+                        <div>
+                            <div>Email</div>
+                            <div>{{profile.email}}</div>
+                        </div>
+                        <div>
+                            <div>Mobile</div>
+                            <div>{{profile.mobile}}</div>
+                        </div>
+                        <div>
+                            <div>DOB</div>
+                            <div>{{profile.dob | date}}</div>
+                        </div>
+                        <div>
+                            <div>Address</div>
+                            <div>{{profile.full_address}}</div>
+                        </div>
+                        <div>
+                            <div>Active</div>
+                            <div>
+                                <mat-slide-toggle
+                                [ngModel]="checked"
+                                (change)="change_active_status_employee($event,profile.slug )"
+                                >
+
+                                </mat-slide-toggle>
+                                </div>
+                        </div>
+                        <div>
+                            <div>Aadhaar</div>
+                            <div>{{profile.aadhaar}}</div>
+                        </div>
+                        <div>
+                            <div>Pan</div>
+                            <div>{{profile.pan}}</div>
+                        </div>
+                        <div>
+                            <div>Job Type</div>
+                            <div>{{profile.job_type | uppercase}}</div>
+                        </div>
+                        <div>
+                            <div>Joining Date</div>
+                            <div>{{profile.joining_date | date}}</div>
+                        </div>
+                    </div>
+
+                }
+                </mat-expansion-panel>
+            <mat-expansion-panel >
+                <mat-expansion-panel-header>
+                    <mat-panel-title>
+                        Nominee Information
+                    </mat-panel-title>
+
+                </mat-expansion-panel-header>
+
+                @if(profile){
+                    <div class="personal_info">
+                        <div>
+                            <div>Name</div>
+                            <div>{{profile.nominee_name}}</div>
+                        </div>
+                         <div>
+                            <div>Address</div>
+                            <div>{{profile.nominee_address}}</div>
+                        </div>
+                        <div>
+                            <div>Relation</div>
+                            <div>{{profile.relation_with_nominee}}</div>
+                        </div>
+                        <div *ngIf="profile.nominee_mobile">
+                            <div>Relation</div>
+                            <div>{{profile.relation_with_nominee}}</div>
+                        </div>
+                    </div>
+                    }
+
+            </mat-expansion-panel>
+
+              </mat-accordion>
+        </div>
+        <div>
+            <mat-accordion multi="true">
+                <mat-expansion-panel [expanded]="true">
+                    <mat-expansion-panel-header>
+                    <mat-panel-title>
+                    Selary Settings
+                    </mat-panel-title>
+                    </mat-expansion-panel-header>
+                <!-- <p>This is the primary content of the panel.
+                    <mat-icon >settings</mat-icon>
+
+                </p> -->
+
+                     @if(!profile?.salary_settings == false){
+                        <div class="personal_info">
+                            <div *ngFor="let item of profile.salary_settings?.item_data">
+                                <div>{{item.allowance_id.split(',')[2]}}</div>
+                                <div>{{item?.amount | currency:"INR"}}</div>
+                            </div>
+                        </div>
+                        <table class="profile table">
+                            <tr>
+                                <td>Allwance</td>
+                                <td>{{profile.salary_settings.allwance | currency:"INR"}}</td>
+                            </tr>
+                            <tr>
+                                <td>Deduction</td>
+                                <td>{{ profile.salary_settings.deduction | currency:"INR"}}</td>
+                            </tr>
+                            <tr *ngIf="installment_amt > 0">
+                                <td>Current Installment</td>
+                                <td>{{  installment_amt | currency:"INR"}}</td>
+                            </tr>
+                            <tr>
+                                <td>Net Salary</td>
+                                <td>{{ (profile.salary_settings.net_salary - installment_amt) | currency:"INR"}}</td>
+                            </tr>
+                            <tr>
+                                <td>Gross Salary</td>
+                                <td>{{profile.salary_settings.gross_salary | currency:"INR"}}</td>
+                            </tr>
+                            <tr *ngIf="pending_amt_sum > 0">
+                                <td>Advance Pending </td>
+                                <td>{{pending_amt_sum | currency:"INR"}}</td>
+                            </tr>
+
+                        </table>
+                        }
+                        <a mat-raised-button color="primary"
+                                        matTooltip="View profile"
+                                        matTooltipClass="example-tooltip-uppercase"
+                                        aria-label="Button that shows a red tooltip"
+                                        [routerLink]="['/employees/edit-salary-setting', profile?.slug, profile?.full_name]"><mat-icon>account_circle</mat-icon>Selary Setting</a>
+                </mat-expansion-panel>
+                <mat-expansion-panel [expanded]="false" *ngIf="payouts.length">
+                    <mat-expansion-panel-header>
+                        <mat-panel-title>
+                          Advance Salary Payouts
+                        </mat-panel-title>
+                    </mat-expansion-panel-header>
+                    <div class="payout_tbl">
+
+                    @if(payouts.length ){
+
+                        <!-- <div class="personal_info" *ngIf="profile.salary_settings.item_data">
+                            <div *ngFor="let item of profile.salary_settings.item_data">
+                                <div>{{item.allowance_id.split(',')[2]}}</div>
+                                <div>{{item.amount | currency:"INR"}}</div>
+                            </div>
+                        </div> -->
+                        <table class="profile table">
+                          <tr>
+                            <th>Installments </th>
+                            <th>Paid</th>
+                        </tr>
+                          @for (item of payouts; track $index) {
+                            <tr>
+                              <td>{{item?.amount | currency:"INR"}}</td>
+                              <td>{{item.is_paid ? "Yes" : "No"}} </td>
+                          </tr>
+                          }
+                        </table>
+                      } @else{
+                         <p>no data</p>
+                      }
+                    </div>
+                    </mat-expansion-panel>
+
+              </mat-accordion>
+        </div>
+    </div>
+    </div>

@@ -1,0 +1,158 @@
+<div class="page_wrapper">
+    <div class="heading_with_btn">
+        <div>
+            <h1 class="heading1"> <strong>{{name}}</strong> Entries</h1>
+        </div>
+     </div>
+
+     <div class="search_form">
+        <div>
+            <form [formGroup]="trialSearchForm" (submit)="submit()">
+
+                <div>
+                    <mat-form-field appearance="outline">
+                        <mat-label>Enter a date range</mat-label>
+                        <mat-date-range-input  [rangePicker]="picker">
+                          <input matStartDate formControlName="start" placeholder="Start date">
+                          <input matEndDate formControlName="end" placeholder="End date">
+                        </mat-date-range-input>
+                        <mat-hint>MM/DD/YYYY – MM/DD/YYYY</mat-hint>
+                        <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+                        <mat-date-range-picker #picker></mat-date-range-picker>
+
+                        @if (trialSearchForm.get("start")?.hasError('matStartDateInvalid')) {
+                          <mat-error>Invalid start date</mat-error>
+                        }
+                        @if (trialSearchForm.get("end")?.hasError('matEndDateInvalid')) {
+                          <mat-error>Invalid end date</mat-error>
+                        }
+                      </mat-form-field>
+                </div>
+
+
+                <button mat-fab color="primary"
+                    type="submit"
+                    [disabled]="trialSearchForm.status == 'INVALID' "
+                >
+                <mat-icon >search</mat-icon>
+                </button>
+            </form>
+
+        </div>
+    </div>
+    <h3 *ngIf="entries.length" class="heading_h3">{{name}} Entries From <span>{{start_date | date}}</span> To <span>{{end_date | date}}</span></h3>
+    <div class="inner_page_table table-responsive">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th colspan="4" style="text-align: right;">Balance</th>
+                    <th colspan="4">{{ balance | currency: 'INR' }}</th>
+
+                </tr>
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Date</th>
+                    <th scope="col">Description</th>
+                    <th scope="col">Entry Type</th>
+                    <th scope="col">Debit</th>
+                    <th scope="col">Credit</th>
+                    <th scope="col">Action</th>
+
+                </tr>
+            </thead>
+            <tbody>
+
+                @if (entries.length) {
+                    @for (item of entries | paginate: { itemsPerPage: itemsPerPage, currentPage: currentPage, totalItems:totalItems }; track $index) {
+                        <tr>
+                            <td> {{(itemsPerPage * (currentPage - 1)) + $index+1}}</td>
+                            <!-- <td></td> -->
+
+                            <td>{{item.date | date}}</td>
+                            <td>{{item.description}}</td>
+                            <td>{{item.commercial_document_type  | capitalizeSpaces}}</td>
+                            <td>
+                                @if (item.t === 'Plutus::DebitAmount') {
+
+                                    {{item.amount | currency:"INR"}}
+                                }
+                            </td>
+                            <td>
+                                @if (item.t === 'Plutus::CreditAmount') {
+                                    {{item.amount | currency:"INR"}}
+                                }
+                            </td>
+
+                            <td>
+                                <div class="action_icon">
+                                    <button class="btn_green" mat-mini-fab (click)="entry_dtl($index, item.slug)" matTooltip="View Entry">  <mat-icon>visibility</mat-icon></button>
+
+                                </div>
+                            </td>
+
+                        </tr>
+
+                        @if (item.is_show) {
+                           @if (entry_dtl_api.length) {
+
+                               @for (item of entry_dtl_api; track $index) {
+                                <tr class="detl_row" [@enterAnimation] >
+
+                                    <td style="text-align: right;" colspan="4" [innerHTML]="item.name"></td>
+                                    <td >
+                                        @if (item.type === 'Plutus::DebitAmount') {
+
+                                            {{item.amount | currency:"INR"}}
+                                        }
+                                    </td>
+                                    <td  colspan="2">
+                                        @if (item.type === 'Plutus::CreditAmount') {
+
+                                            {{item.amount | currency:"INR"}}
+                                        }
+                                    </td>
+
+                                </tr>
+                                }
+
+                           }@else {
+                            <tr>
+                                <td ></td>
+                                <td colspan="7">No Data</td>
+
+                              </tr>
+
+                        }
+
+
+                        }
+
+                    }
+
+                }
+                @else {
+                    <tr *ngIf="!is_sppiner">
+                        <td colspan="7" style="position: relative; height: 400px;" class="no_data">
+                            No Data
+                        </td>
+                    </tr>
+                }
+                <tr *ngIf="is_sppiner"  class="no_data">
+                    <td style="position: relative; height: 400px;"  colspan="7"> <ngx-spinner [fullScreen]="false" class="spinner_custom" type="ball-scale-multiple"></ngx-spinner>
+                    </td>
+                </tr>
+
+            </tbody>
+            <tfoot  *ngIf="pages > 1">
+                <tr>
+                    <!-- <td colspan="8"><pagination-controls (pageChange)="currentPage = $event"></pagination-controls></td> -->
+                    <td colspan="7"><pagination-controls (pageChange)="pageChange($event)"
+
+
+                        >
+                        ></pagination-controls></td>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+</div>

@@ -1,0 +1,8 @@
+:host ::ng-deep {
+    span.selected-item {
+        max-width: 100% !important;
+    }
+    .multiselect-dropdown {
+      background: white
+    }
+  }

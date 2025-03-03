@@ -1,0 +1,41 @@
+<div class="page_wrapper">
+    <div class="heading_with_btn bg_w_p15">
+        <div>
+            <h1 class="heading1"> Product <strong>Categories</strong></h1>
+        </div>
+        <div class="action_icon">
+            <a class="btn_pink" mat-mini-fab matTooltip="Add New Category" [routerLink]="'/store/new-category'"> <mat-icon>add</mat-icon> </a>
+        </div>
+
+    </div>
+    <div *ngIf="is_spinner">
+        <div style="position: relative; height: 400px;"> <ngx-spinner bdColor = "rgba(75, 221, 50, 0.8)" color = "#fff" [fullScreen]="false" class="spinner_custom" type="square-jelly-box"></ngx-spinner>
+        </div>
+      </div>
+    <div  *ngIf="!is_spinner" class="inner_page_table table-responsive">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Name</th>
+                    <th scope="col">Description</th>
+
+                </tr>
+            </thead>
+            <tbody>
+                <ng-container *ngIf="categories">
+
+                    @for (item of categories; track $index) {
+                        <tr>
+                            <td>{{$index+1}}</td>
+                            <!-- <td></td> -->
+                            <td>{{item.name}}</td>
+                            <td>{{item.description}}</td>
+                        </tr>
+                    }
+                </ng-container>
+
+            </tbody>
+        </table>
+    </div>
+</div>

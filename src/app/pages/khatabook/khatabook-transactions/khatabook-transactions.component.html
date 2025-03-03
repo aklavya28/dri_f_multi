@@ -1,0 +1,106 @@
+<div class="page_wrapper">
+  <div class="c_shadow heading_with_btn">
+    <div>
+      <h1 class="heading1">
+        Khatabook Transactions
+        <strong style="text-transform: capitalize">{{ name }}</strong>
+      </h1>
+    </div>
+    <div>
+        <button mat-icon-button  class='nav_dropdown' [matMenuTriggerFor]="menu" aria-label="Example icon-button with a menu">
+          <mat-icon>more_vert</mat-icon>
+        </button>
+        <mat-menu #menu="matMenu">
+          <button mat-menu-item [routerLink]="['/khatabook/khatabook-accounts', 1]" >
+            <mat-icon>supervised_user_circle</mat-icon>
+            <span>Khatabook Accounts</span>
+          </button>
+          <button mat-menu-item [routerLink]="['/khatabook/khata-orders',slug,name,1]" >
+            <mat-icon>storage</mat-icon>
+            <span>Orders</span>
+          </button>
+          <button mat-menu-item [routerLink]="['/khatabook/khata-profile',slug,name, 1]" >
+            <mat-icon>short_text</mat-icon>
+            <span>Entries</span>
+          </button>
+          <button mat-menu-item [routerLink]="['/khatabook/add-payment',slug,name]" >
+            <mat-icon>payment</mat-icon>
+            <span>Pay / Receive Money</span>
+          </button>
+
+        </mat-menu>
+      </div>
+  </div>
+
+  <div class="inner_page_table table-responsive">
+    <table class="table table-striped">
+      <thead>
+
+
+        <tr>
+          <th scope="col">#</th>
+          <th scope="col">Date</th>
+          <th scope="col">Paid/Received</th>
+          <th scope="col">Remarks</th>
+          <th scope="col">Type</th>
+          <th scope="col">Amount</th>
+          <th scope="col">Is Processed</th>
+          <th scope="col">Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        @if (trans.length) {
+            @for (item of trans | paginate: { itemsPerPage: itemsPerPage, currentPage: currentPage, totalItems:totalItems }; track $index ) {
+
+                <tr>
+                  <td style="display: none;">{{item.id}}</td>
+                    <td> {{(itemsPerPage * (currentPage - 1)) + $index+1}}</td>
+                    <td>{{item.transaction_date | date}}</td>
+                    <td>
+
+                            <div *ngFor="let p of item.paid_to" class="particullers">
+                                <div >{{p?.title | uppercase}}</div>
+                                <div>{{p?.value | currency:"INR"}}</div>
+                            </div>
+
+
+                    </td>
+                    <td>{{item.remarks}}</td>
+                    <td>
+
+                        <span ngClass="{{ item.payment_type === 'paid' || item.payment_type === 'paid advance'? 'badge-danger' :  'badge-success' }} " class="badge">{{(item.payment_type) | uppercase }}</span>
+
+                    </td>
+                    <td>{{item.amount | currency:"INR"}}</td>
+                    <td><span ngClass="{{ item.is_processed ? 'badge-success': 'badge-danger' }} " class="badge">{{item.is_processed ? 'Yes': 'No  '}}</span></td>
+                    <td>
+                      <div class="btn_area_action" *ngIf="item.is_processed">
+                        <button (click)="delete_trans(item.id)" disabled="true" type="button" mat-flat-button color="warn">delete</button>
+
+                      </div>
+                    </td>
+                </tr>
+            }
+        }@else{
+            <tr *ngIf="!is_sppiner">
+                <td colspan="8" style="position: relative; height: 400px;" class="no_data">
+                    No Data
+                </td>
+            </tr>
+        }
+        <tr *ngIf="is_sppiner"  class="no_data">
+            <td style="position: relative; height: 400px;"  colspan="8"> <ngx-spinner [fullScreen]="false" class="spinner_custom" type="ball-scale-multiple"></ngx-spinner>
+            </td>
+        </tr>
+      </tbody>
+      <tfoot  *ngIf="trans.length && this.pages > 1 ">
+        <tr>
+            <!-- <td colspan="8"><pagination-controls (pageChange)="currentPage = $event"></pagination-controls></td> -->
+            <td colspan="8">
+                <pagination-controls (pageChange)="pageChange($event)"></pagination-controls>
+            </td>
+        </tr>
+    </tfoot>
+    </table>
+  </div>
+</div>

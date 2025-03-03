@@ -1,0 +1,53 @@
+
+<div class="page_wrapper">
+  <div class="heading_with_btn">
+    <div>
+        <h1 class="heading1">Add New <strong>Ledger</strong></h1>
+    </div>
+  </div>
+
+    <form [formGroup]="newLedherForm" (submit)="submit()">
+        <div class="c_shadow input_forms">
+          <div>
+            <mat-form-field appearance="outline">
+              <mat-label>Choose Ledger Type</mat-label>
+              <mat-select
+              formControlName="type"
+              [errorStateMatcher]="matcher"
+               >
+               <mat-option value="Asset">Asset</mat-option>
+               <mat-option value="Liability">Liability</mat-option>
+               <mat-option value="Equity">Equity</mat-option>
+               <mat-option value="Revenue">Revenue</mat-option>
+               <mat-option value="Expense">Expense</mat-option>
+
+            </mat-select>
+            @if (newLedherForm.get('type')?.hasError('required') && newLedherForm.get('type')?.touched) {
+                <mat-error>Ledger type is <strong>required</strong></mat-error>
+              }
+            </mat-form-field>
+          </div>
+          <div>
+            <mat-form-field appearance="outline">
+                <mat-label>Ledger Name</mat-label>
+                <input matInput
+                formControlName="name"
+                [errorStateMatcher]="matcher"
+                >
+                @if(newLedherForm.get('name')?.hasError('required') && newLedherForm.get('name')?.touched) {
+                    <mat-error>Ledger name is <strong>required</strong></mat-error>
+                  }
+                @if(newLedherForm.get('name')?.hasError('alphanumeric') && newLedherForm.get('name')?.touched) {
+                    <mat-error>Only valid <strong>Characters</strong></mat-error>
+                  }
+            </mat-form-field>
+
+          </div>
+        </div>
+        <button mat-raised-button color="primary"
+        type="submit"
+        [disabled]="this.newLedherForm.status == 'INVALID' "
+      >Save</button>
+    </form>
+</div>
+

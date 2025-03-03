@@ -1,0 +1,121 @@
+<div class="page_wrapper">
+    <div class="heading_with_btn">
+        <div>
+            <h1 class="heading1"> Stock <strong>Register</strong></h1>
+        </div>
+        <!-- <div>
+            <a [routerLink]="['/company/new-bank']" mat-flat-button color="primary">New Bank</a>
+            <button mat-flat-button color="primary" >New Bank</button>
+        </div> -->
+    </div>
+
+    <div *ngIf="is_sppiner">
+        <div style="position: relative; height: 400px;"> <ngx-spinner bdColor = "rgba(75, 221, 50, 0.8)" color = "#fff" [fullScreen]="false" class="spinner_custom" type="square-jelly-box"></ngx-spinner>
+        </div>
+      </div>
+      <div class="search_form">
+        <div>
+            <form [formGroup]="daybookSearchForm" (submit)="submit()">
+
+                <div>
+
+                      <mat-form-field class="example-full-width with_link" appearance="outline">
+                        <mat-label>Choose Product</mat-label>
+                        <input type="text"
+                               placeholder="Pick one"
+                               aria-label="Number"
+                               formControlName="name"
+                               matInput
+                               [matAutocomplete]="auto">
+                        <mat-autocomplete #auto (optionSelected)="onOptionSelect($event.option.value)">
+                          @for (option of filteredProduct | async; track option) {
+                            <!-- <mat-option  [value]="option.name+','+option.hsn_sac +','+ option.id">{{option.id}}/{{(option.name +'/'+ option.hsn_sac) | uppercase}}</mat-option> -->
+                            <mat-option  [value]="option">{{(option.name +'/'+ option.part_no) | uppercase}}</mat-option>
+                          }
+                          <mat-option  value="all">All</mat-option>
+                        </mat-autocomplete>
+                        @if (daybookSearchForm.get('name')?.hasError('required')) {
+                          <mat-error>Product is <strong>required</strong></mat-error>
+                        }
+                      </mat-form-field>
+                </div>
+
+
+
+                <button mat-fab color="primary"
+                    type="submit"
+                    [disabled]="daybookSearchForm.status == 'INVALID' "
+                >
+                <mat-icon >search</mat-icon>
+                </button>
+            </form>
+
+        </div>
+    </div>
+    <div *ngIf="!is_sppiner" class="inner_page_table table-responsive">
+        <table class="table table-striped table-responsive">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Product</th>
+                    <th>Purchase</th>
+                    <th>Purchase Return</th>
+                    <th>Sale</th>
+                    <th>Sale Return</th>
+                    <th>Total Sale</th>
+                    <th>In Stock</th>
+                </tr>
+            </thead>
+            <tbody>
+
+                @if (data.length) {
+                    @for ( item of data | paginate: { itemsPerPage: itemsPerPage, currentPage: currentPage, totalItems:totalItems }; track $index)  {
+                        <tr>
+                            <td> {{(itemsPerPage * (currentPage - 1)) + $index+1}}</td>
+                            <td style="text-transform: capitalize;">{{item.name }}</td>
+                            <td >
+                                <p>
+                                    <strong>{{item.purchase_count }}</strong> {{item.unit }}
+                                </p>
+                                    <p class="price">{{item.total_purchase | currency:"INR" }}</p>
+                            </td>
+                            <td >
+                                <p><strong>{{item.purchase_return_count }}</strong> {{item.unit }}</p>
+                                <p class="price"> {{item.purchase_return | currency:"INR" }}</p>
+                            </td>
+                            <td >
+                                <p><strong>{{item.sale_count }}</strong> {{item.unit }}</p>
+                                <p class="price">{{item.total_sale | currency:"INR" }}</p>
+                            </td>
+                            <td >
+                                <p><strong>{{item.sale_return_count }}</strong> {{item.unit }}</p>
+                                <p class="price">{{item.sale_return | currency:"INR" }}</p>
+                            </td>
+                            <td >
+                                <p><strong>{{item.sale_count - item.sale_return_count }}</strong> {{item.unit }}</p>
+                                <p class="price">{{(item.total_sale -item.sale_return) | currency:"INR" }}</p>
+                            </td>
+                            <td>
+                               <p> <strong>{{(item.purchase_count + item.sale_return_count) - (item.sale_count + item.purchase_return_count)}}</strong> {{item.unit }}</p>
+                            </td>
+                        </tr>
+                    }
+                }@else {
+                    <tr>
+                        <td colspan="8" class="no_data">
+                            No Data
+                        </td>
+                    </tr>
+                }
+              </tbody>
+              <tfoot  *ngIf="data.length && this.pages > 1 ">
+                <tr>
+                    <!-- <td colspan="8"><pagination-controls (pageChange)="currentPage = $event"></pagination-controls></td> -->
+                    <td colspan="8">
+                        <pagination-controls (pageChange)="pageChange($event)"></pagination-controls>
+                    </td>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+</div>

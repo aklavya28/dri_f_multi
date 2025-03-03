@@ -1,0 +1,51 @@
+<div class="page_wrapper">
+    <h1>Promoter <strong>Shares</strong></h1>
+    <div class="inner_page_table table-responsive">
+        <table class="table table-striped">
+            <thead *ngIf="promoters.length">
+
+                <tr>
+                    <th colspan="4" style="text-align: right;">Total Share Value: </th>
+                    <th colspan="2">{{total_share_value | currency:"INR"}}</th>
+                </tr>
+                <tr>
+                    <th>#</th>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Shares</th>
+                    <th>Share Value</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+
+                @if (promoters.length) {
+                    @for (promoter of promoters;track $index) {
+                        <tr >
+                            <td>{{$index+1 }} </td>
+                            <td style="text-transform: capitalize;">{{promoter.fullname  }} </td>
+                            <td>{{promoter.email}}</td>
+                            <td>{{promoter.shares}}</td>
+                            <td>{{promoter.total_value | currency:"INR"}}</td>
+                            <td>
+                                <div class="btn_area_action">
+                                    <button mat-flat-button color="primary" (click)="showShareTrans(promoter.slug )">View</button>
+                                    <!-- <a mat-flat-button color="accent" [routerLink]="['/company/user/promoter-share', user.slug, user?.f_name +' '+ user?.l_name]">Share</a> -->
+                                </div>
+                            </td>
+
+                        </tr>
+
+                    }
+                }@else {
+                    <tr>
+                        <td style="vertical-align: middle; height: 150px;" colspan="6">No Data</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- {{promoters | json}} -->
+

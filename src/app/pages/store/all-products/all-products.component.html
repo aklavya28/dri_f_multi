@@ -1,0 +1,113 @@
+<div class="page_wrapper">
+    <div class="heading_with_btn">
+        <div>
+            <h1 class="heading1"> All <strong>Products</strong></h1>
+        </div>
+     </div>
+    <div class="search_form">
+        <div>
+            <form [formGroup]="productSearchForm" (submit)="seach_data()">
+
+                <div>
+                    <mat-form-field appearance="outline">
+                        <mat-label>Choose Category</mat-label>
+                        <mat-select
+                        formControlName="categories_list"
+                        [errorStateMatcher]="matcher"
+                         >
+                         @for (item of categories; track $index) {
+                             <mat-option value="{{item.id}}">{{item.name}}</mat-option>
+                         }
+
+                      </mat-select>
+                      @if (productSearchForm.get('categories_list')?.hasError('required')) {
+                          <mat-error>Category <strong>required</strong></mat-error>
+                        }
+                      </mat-form-field>
+                </div>
+                <div>
+                    <mat-form-field appearance="outline">
+                        <mat-label>Seach by </mat-label>
+                        <mat-select
+                        formControlName="type"
+                        [errorStateMatcher]="matcher"
+                         >
+                         <mat-option value="hsn_sac">HSN/SAC</mat-option>
+                         <mat-option value="name">Name</mat-option>
+                         <mat-option value="part_no">Part No</mat-option>
+
+                      </mat-select>
+                      @if (productSearchForm.get('type')?.hasError('required')) {
+                          <mat-error>Search by type is <strong>required</strong></mat-error>
+                        }
+                      </mat-form-field>
+                </div>
+                <div>
+                    <mat-form-field appearance="outline">
+                        <mat-label>keyword</mat-label>
+                        <input type="text" matInput formControlName="search_key" [errorStateMatcher]="matcher"
+                               >
+                        <!-- <mat-hint>Errors appear instantly!</mat-hint> -->
+
+                      </mat-form-field>
+                </div>
+
+                <button mat-fab color="primary"
+                    type="submit"
+                    [disabled]="this.productSearchForm.status == 'INVALID' "
+                >
+                <mat-icon >search</mat-icon>
+                </button>
+            </form>
+
+        </div>
+        <div class="action_icon">
+            <a class="btn_pink" mat-mini-fab matTooltip="Add New Product"  [routerLink]="'/store/new-product'"><mat-icon>add</mat-icon> </a>
+        </div>
+    </div>
+    <div *ngIf="is_spinner">
+        <div style="position: relative; height: 400px;"> <ngx-spinner bdColor = "rgba(75, 221, 50, 0.8)" color = "#fff" [fullScreen]="false" class="spinner_custom" type="square-jelly-box"></ngx-spinner>
+        </div>
+      </div>
+    <div  *ngIf="!is_spinner" class="inner_page_table table-responsive">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Category</th>
+                    <th scope="col">Name</th>
+                    <th scope="col">Part No</th>
+                    <th scope="col">Unit</th>
+                    <th scope="col">HSN/SAC</th>
+                    <th scope="col">GST</th>
+                    <th scope="col">Description</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- <tr style="position: relative; height: 400px;">
+                    <td colspan="7"></td>
+                </tr> -->
+                @if (products.length) {
+                    @for (item of products; track $index) {
+                        <tr>
+                            <td>{{$index+1}}</td>
+                            <!-- <td></td> -->
+                            <td> <span class="badge bg-primary">{{item.category}}</span> </td>
+                            <td>{{item.name}}</td>
+                            <td>{{item.part_no}}</td>
+                            <td>{{item.unit}}</td>
+                            <td>{{item.hsn_sac}}</td>
+                            <td>
+                                {{item.gst}} %
+                            </td>
+
+                            <td>{{item.description}}</td>
+                        </tr>
+                    }
+                }
+
+
+            </tbody>
+        </table>
+    </div>
+</div>

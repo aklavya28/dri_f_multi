@@ -1,0 +1,147 @@
+<div class="page_wrapper">
+
+
+    <div class="c_shadow heading_with_btn">
+      <div>
+          <h1 class="heading1"> Khatabook Entries <strong style="text-transform: capitalize;">{{name}}</strong></h1>
+      </div>
+      <div>
+        <button mat-icon-button  class='nav_dropdown' [matMenuTriggerFor]="menu" aria-label="Example icon-button with a menu">
+          <mat-icon>more_vert</mat-icon>
+        </button>
+        <mat-menu #menu="matMenu">
+            <button mat-menu-item [routerLink]="['/khatabook/khatabook-accounts', 1]" >
+                <mat-icon>supervised_user_circle</mat-icon>
+                <span>Party Accounts</span>
+              </button>
+          <button mat-menu-item [routerLink]="['/khatabook/khata-orders',slug,name,1]" >
+            <mat-icon>storage</mat-icon>
+            <span>Orders</span>
+          </button>
+          <button mat-menu-item [routerLink]="['/khatabook/view-trans',slug,name, 1]" >
+            <mat-icon>account_balance_wallet</mat-icon>
+            <span>Party Transactions</span>
+          </button>
+          <button mat-menu-item [routerLink]="['/khatabook/add-payment',slug, name]" >
+            <mat-icon>payment</mat-icon>
+            <span>Pay / Receive Money</span>
+          </button>
+
+        </mat-menu>
+      </div>
+
+   </div>
+
+
+   <div *ngIf="is_sppiner">
+    <div style="position: relative; height: 400px;"> <ngx-spinner bdColor = "rgba(75, 221, 50, 0.8)" color = "#fff" [fullScreen]="false" class="spinner_custom" type="square-jelly-box"></ngx-spinner>
+    </div>
+   </div>
+
+
+   <div *ngIf="!is_sppiner" class="inner_page_table table-responsive">
+    <div class="no_data2" *ngIf="!entries.length">
+        <p>No Data</p>
+    </div>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th colspan="4" style="text-align: right; ">
+                    Balance
+                </th>
+                <th colspan="2">
+                    <strong>{{balance | currency:"INR"}}</strong>
+                </th>
+            </tr>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Date</th>
+                <th scope="col">Description</th>
+                <th scope="col">Debit</th>
+                <th scope="col">Credit</th>
+                <th scope="col">Action</th>
+            </tr>
+        </thead>
+        <tbody>
+
+            @if (entries.length) {
+                @for (item of entries | paginate: { itemsPerPage: itemsPerPage, currentPage: currentPage, totalItems:totalItems }; track $index) {
+                    <tr>
+                        <td> {{(itemsPerPage * (currentPage - 1)) + $index+1}}</td>
+                        <!-- <td></td> -->
+
+                        <td>{{item.date | date}}</td>
+                        <td>{{item.description}}</td>
+                        <td>
+                            @if (item.type === 'Plutus::DebitAmount') {
+
+                                {{item.amount | currency:"INR"}}
+                            }
+                        </td>
+                        <td>
+                            @if (item.type === 'Plutus::CreditAmount') {
+                                {{item.amount | currency:"INR"}}
+                            }
+                        </td>
+
+                        <td>
+                            <div class="btn_area_action">
+                                <button mat-flat-button color="primary" (click)="entry_dtl($index, item.slug)"> View</button>
+                            </div>
+                        </td>
+
+                    </tr>
+
+                    @if (item.is_show) {
+                       @if (entry_dtl_api.length) {
+
+                           @for (item of entry_dtl_api; track $index) {
+                            <tr class="detl_row" [@enterAnimation] >
+
+                                <td style="text-align: right;" colspan="3" [innerHTML]="item.name"></td>
+                                <td >
+                                    @if (item.type === 'Plutus::DebitAmount') {
+
+                                        {{item.amount | currency:"INR"}}
+                                    }
+                                </td>
+                                <td  colspan="2">
+                                    @if (item.type === 'Plutus::CreditAmount') {
+
+                                        {{item.amount | currency:"INR"}}
+                                    }
+                                </td>
+
+                            </tr>
+                            }
+
+                       }@else {
+                        <tr>
+                            <td ></td>
+                            <td colspan="5">No Data</td>
+
+                          </tr>
+
+                    }
+
+
+                    }
+
+                }
+
+            }
+
+        </tbody>
+        <tfoot  *ngIf="pages > 1">
+            <tr>
+                <!-- <td colspan="8"><pagination-controls (pageChange)="currentPage = $event"></pagination-controls></td> -->
+                <td colspan="6"><pagination-controls (pageChange)="pageChange($event)"
+
+
+                    >
+                    ></pagination-controls></td>
+            </tr>
+        </tfoot>
+    </table>
+</div>
+  </div>

@@ -1,0 +1,84 @@
+<div class="page_wrapper">
+    <div class="heading_with_btn">
+        <div>
+            <h1 class="heading1"> Our <strong>Employees</strong></h1>
+        </div>
+        <div>
+            <button mat-raised-button color="primary" (click)="routeToNew()"> <mat-icon>add</mat-icon>Employee</button>
+        </div>
+    </div>
+
+    <div *ngIf="is_spinner">
+        <div style="position: relative; height: 400px;"> <ngx-spinner bdColor = "rgba(75, 221, 50, 0.8)" color = "#fff" [fullScreen]="false" class="spinner_custom" type="square-jelly-box"></ngx-spinner>
+        </div>
+      </div>
+
+    <div  *ngIf="!is_spinner" class="inner_page_table table-responsive">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Name</th>
+                    <th scope="col">Father Name</th>
+                    <th scope="col">Mobile</th>
+                    <th scope="col">Email</th>
+                    <th scope="col">Joining Date</th>
+                    <th scope="col">Active</th>
+                    <th scope="col">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (employees.length) {
+                    @for (item of employees; track $index) {
+
+                        <tr class="{{!item.salary_settings ? 'red': ''}}">
+                            <td>{{$index+1}}</td>
+                            <!-- <td></td> -->
+                            <td>{{item.full_name}}
+                                @if (!item.salary_settings) {
+
+
+                                    <span class="badge badge-danger" >Salary Setting is pending</span>
+
+                                }
+                            </td>
+                            <td>{{item.fathername}}</td>
+                            <td>{{item.mobile}}</td>
+                            <td>{{item.email}}</td>
+                            <td>{{item.joining_date | date}}</td>
+                            <td>
+                                <span ngClass="{{ item.is_active ? 'badge-success': 'badge-danger' }} " class="badge">{{item.is_active ? 'Yes': 'No  '}}</span>
+                            </td>
+                            <td>
+
+                                <!-- <a
+                                matTooltip="Salary Setting"
+                                matTooltipClass="example-tooltip-uppercase"
+                                aria-label="Button that shows a red tooltip"
+                                [routerLink]="['/employees/salary-setting', item.slug, item.full_name]"><mat-icon>settings</mat-icon></a> -->
+                                 <a
+                                matTooltip="Salary Setting"
+                                matTooltipClass="example-tooltip-uppercase"
+                                aria-label="Button that shows a red tooltip"
+                                [routerLink]="['/employees/edit-salary-setting', item.slug, item.full_name]"><mat-icon>settings</mat-icon></a>
+                                <a
+                                matTooltip="View profile"
+                                matTooltipClass="example-tooltip-uppercase"
+                                aria-label="Button that shows a red tooltip"
+                                [routerLink]="['/employees/emp-profile', item.slug]"><mat-icon>account_circle</mat-icon></a>
+
+                        </tr>
+                    }
+                }
+                @else {
+                    <tr>
+                        <td colspan="8" style="height: 400px; vertical-align: middle;"> No Data</td>
+                    </tr>
+                }
+
+
+
+            </tbody>
+        </table>
+    </div>
+</div>

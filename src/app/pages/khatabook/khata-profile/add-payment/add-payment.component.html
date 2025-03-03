@@ -1,0 +1,156 @@
+<div class="page_wrapper">
+      <div class="c_shadow heading_with_btn mb-5">
+        <div>
+          <h1 class="heading1">
+            Make payment for
+            <strong style="text-transform: capitalize">{{ name }}</strong>
+            || Balance: <span class="badge bg-primary">{{balance | currency:"INR"}} </span>
+          </h1>
+        </div>
+      <div>
+        <button mat-icon-button  class='nav_dropdown' [matMenuTriggerFor]="menu" aria-label="Example icon-button with a menu">
+          <mat-icon>more_vert</mat-icon>
+        </button>
+        <mat-menu #menu="matMenu">
+          <button mat-menu-item [routerLink]="['/khatabook/khatabook-accounts', 1]" >
+            <mat-icon>supervised_user_circle</mat-icon>
+            <span>Party Accounts</span>
+          </button>
+          <button mat-menu-item [routerLink]="['/khatabook/khata-orders',slug,name,1]" >
+            <mat-icon>storage</mat-icon>
+            <span>Orders</span>
+          </button>
+          <button mat-menu-item [routerLink]="['/khatabook/khata-profile',slug,name, 1]" >
+            <mat-icon>short_text</mat-icon>
+            <span>Entries</span>
+          </button>
+          <button mat-menu-item [routerLink]="['/khatabook/view-trans',slug,name, 1]" >
+            <mat-icon>account_balance_wallet</mat-icon>
+            <span>Party Transactions</span>
+          </button>
+
+        </mat-menu>
+      </div>
+  </div>
+
+   <form [formGroup]="paymentForm" (submit)="submit()">
+    <div class="input_forms2_main mt-4">
+        <div class="c_shadow input_forms2">
+          <h2>Payment <strong>Information</strong></h2>
+          <div>
+            <mat-form-field appearance="outline">
+                <mat-label>Payment Type</mat-label>
+                <mat-select
+                formControlName="payment_type"
+                (valueChange)="payment_mode($event)"
+                [errorStateMatcher]="matcher"
+                >
+                    <mat-option  value="paid" >Pay </mat-option>
+                    <mat-option  value="received" >Receive </mat-option>
+              </mat-select>
+              <!-- {{newOrderForm.get('credit_from')?.value | json}} -->
+              @if (paymentForm.get('payment_type')?.hasError('required')) {
+                  <mat-error>Payment type is <strong>required</strong></mat-error>
+                }
+              </mat-form-field>
+          </div>
+          <div>
+            <mat-form-field appearance="outline">
+                <mat-label>Transaction Date</mat-label>
+                <input matInput
+                [max]="getToday()"
+                formControlName="date"
+                [matDatepicker]="picker2">
+                <mat-hint>MM/DD/YYYY</mat-hint>
+                <mat-datepicker-toggle matIconSuffix [for]="picker2"></mat-datepicker-toggle>
+                <mat-datepicker #picker2></mat-datepicker>
+                @if(paymentForm.get('date')?.hasError('required')) {
+                  <mat-error>Date is <strong>required</strong></mat-error>
+                }
+                @if(paymentForm.get('date')?.hasError('dateGreaterThanToday')) {
+                  <mat-error> Date cannot be greater than <strong>today</strong></mat-error>
+                }
+              </mat-form-field>
+          </div>
+        </div>
+
+
+        <div class="c_shadow input_forms2">
+            <h2>Payment <strong>Mode</strong></h2>
+
+            <div>
+              <mat-form-field appearance="outline">
+                <mat-label>Payment Mode</mat-label>
+                <mat-select
+                formControlName="paid_to"
+                [errorStateMatcher]="matcher"
+                (valueChange)="from_change($event)"
+                multiple
+                >
+                @if(liquid.length){
+                  @for (item of liquid; track $index) {
+                    <mat-option  [value]="item" >{{item.name | uppercase}}</mat-option>
+                  }
+                }
+
+
+                  </mat-select>
+                  <!-- {{newOrderForm.get('credit_from')?.value | json}} -->
+                  @if (paymentForm.get('paid_to')?.hasError('required')) {
+                      <mat-error>Field is <strong>required</strong></mat-error>
+                  }
+              </mat-form-field>
+
+            </div>
+
+              <ng-container formArrayName="fromInputs">
+                <div *ngFor="let group of fromInputs.controls; let i = index" [formGroupName]="i">
+
+                  <mat-form-field appearance="outline">
+
+
+                    <mat-label>Amount For {{ group.get('title')?.value | uppercase}}</mat-label>
+                    <input matInput formControlName="value" maxlength="11" required>
+                    <mat-error *ngIf="group.get('value')?.hasError('required')">This field is required</mat-error>
+                    <mat-error *ngIf="group.get('value')?.hasError('invalidDigit')">Invalid <strong>Digit</strong></mat-error>
+                    <mat-error *ngIf="group.get('value')?.hasError('max')">Can not pay morethen  <strong> Rs. {{ group.get('value')?.errors?.['max'].max }}</strong></mat-error>
+                  </mat-form-field>
+
+                </div>
+              </ng-container>
+
+          </div>
+          <div class="c_shadow input_forms2">
+            <h2>Payment <strong>Remarks</strong></h2>
+              <div class="textarea">
+                  <mat-form-field appearance="outline">
+                      <mat-label>Remarks</mat-label>
+                      <textarea matInput formControlName="remarks" placeholder="Add Transaction remarks"></textarea>
+                      @if (paymentForm.get('remarks')?.hasError('required')) {
+                          <mat-error>Remarks is <strong>required</strong></mat-error>
+                        }
+                        @if (paymentForm.get('remarks')?.hasError('maxlength')) {
+                          <mat-error>Maximum character length <strong>100</strong></mat-error>
+                        }
+                    </mat-form-field>
+              </div>
+          </div>
+
+
+
+          <div style="position: relative; top: -28px; margin-bottom: -20px;" class="input_forms2_main" *ngIf="balance_check_err.length">
+            <div class="error" *ngFor="let item of balance_check_err">
+              <p>{{item}}</p>
+            </div>
+          </div>
+
+        <div [ngStyle]="{ 'margin': balance_check_err.length ? '0' : '-20px 0 20px 0' }" > <button mat-raised-button color="warn"
+            type="submit"
+            [disabled]="this.paymentForm.status == 'INVALID' "
+          >Process Payment</button></div>
+      </div>
+
+   </form>
+
+
+</div>

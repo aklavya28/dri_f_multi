@@ -1,0 +1,86 @@
+    <div class="page_wrapper">
+      <div class="heading_with_btn">
+        <div>
+            <h1 class="heading1">Edit Bank: <strong>{{select_bank.bank_name}}</strong></h1>
+        </div>
+
+    </div>
+
+        <form [formGroup]="bankForm" (submit)="submit()">
+            <div class="c_shadow input_forms">
+                <input type="hidden" style="display: none;" formControlName="slug">
+                <!-- <div>
+                    <mat-form-field>
+                      <mat-label>Bank Name</mat-label>
+                      <mat-select
+                      formControlName="bank_name"
+                      [errorStateMatcher]="matcher"
+                       >
+                        @if (listed_banks_api.length) {
+                            <mat-option *ngFor="let bank of listed_banks_api "  value="{{bank}}">{{bank}}</mat-option>
+                        }
+                    </mat-select>
+                    @if (bankForm.get('bank_name')?.hasError('required')) {
+                        <mat-error>Bank Name is <strong>required</strong></mat-error>
+                      }
+                    </mat-form-field>
+                  </div> -->
+
+                  <div>
+                    <mat-form-field appearance="outline">
+                        <mat-label>Account Holder Name</mat-label>
+                        <input matInput
+                          formControlName="ac_holder_name"
+                          value="{{select_bank.ac_holder_name}}"
+                        maxlength="256">
+                        <!-- <mat-hint align="start"><strong>Don't disclose personal info</strong> </mat-hint> -->
+
+                        @if (bankForm.get('ac_holder_name')?.hasError('required')) {
+                          <mat-error>A/c Holder Name is <strong>required</strong></mat-error>
+                        } @if (bankForm.get('ac_holder_name')?.hasError('pattern')) {
+                          <mat-error>Only valid  <strong>Digits & characters</strong></mat-error>
+                        }
+                      </mat-form-field>
+
+                  </div>
+                  <div>
+                    <mat-form-field appearance="outline">
+                        <mat-label>Bank A/c Number</mat-label>
+                        <input matInput
+                          formControlName="ac_number"
+                        >
+                        <!-- <mat-hint align="start"><strong>Don't disclose personal info</strong> </mat-hint> -->
+
+                        @if (bankForm.get('ac_number')?.hasError('required')) {
+                          <mat-error>A/c Holder Name is <strong>required</strong></mat-error>
+                        } @if (bankForm.get('ac_number')?.hasError('pattern')) {
+                          <mat-error>Only valid  <strong>Digits</strong></mat-error>
+                        }
+                      </mat-form-field>
+                      <!-- {{bankForm.get('ac_number')?.errors | json}} -->
+                  </div>
+                  <div>
+                    <mat-form-field appearance="outline">
+                        <mat-label>IFSC</mat-label>
+                        <input matInput
+                          formControlName="ifsc"
+
+                        maxlength="256">
+                        <!-- <mat-hint align="start"><strong>Don't disclose personal info</strong> </mat-hint> -->
+
+                        @if (bankForm.get('ifsc')?.hasError('required')) {
+                          <mat-error>IFSC is <strong>required</strong></mat-error>
+                        } @if (bankForm.get('ifsc')?.hasError('pattern')) {
+                          <mat-error>Only valid  <strong>Digits & characters</strong></mat-error>
+                        }
+                      </mat-form-field>
+
+                  </div>
+
+            </div>
+            <button mat-raised-button color="primary"
+            type="submit"
+            [disabled]="this.bankForm.status == 'INVALID' "
+          >Save</button>
+        </form>
+    </div>

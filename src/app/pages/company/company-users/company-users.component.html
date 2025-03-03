@@ -1,0 +1,70 @@
+<div class="page_wrapper">
+    <div class="heading_with_btn">
+        <div>
+            <h1 class="heading1"> Company <strong>Users</strong></h1>
+        </div>
+        <div class="action_icon">
+            <a class="btn_pink" [routerLink]="['/company/create-new-user']" mat-mini-fab matTooltip="New User" matTooltipPosition="above" > <mat-icon>add</mat-icon> </a>
+            <!-- <button mat-flat-button color="primary" >New Bank</button> -->
+        </div>
+    </div>
+
+    <div class="inner_page_table table-responsive">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Roles</th>
+
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+
+                @if (users.length) {
+                    @for ( user of users ;track $index) {
+                        <tr >
+                            <td>{{$index+1 }} </td>
+                            <td [ngStyle]="{'text-transform': 'capitalize'}">{{user?.f_name +' '+ user?.l_name  }} </td>
+                            <td>{{user.email}}</td>
+                            <td>
+                                <div>
+                                    @if (user.roles.length) {
+                                      @for (role of user.roles; track $index) {
+                                        <div>{{role.name}}</div>
+                                      }
+                                    }
+
+                                </div>
+
+                            </td>
+                            <td>
+                                <div  class="action_icon">
+
+                                    <!-- <button mat-raised-button color="primary" >Edit</button></td> -->
+                                    <a class="btn_green" mat-mini-fab matTooltip="Add Role" [routerLink]="['/company/users', user.slug, user?.f_name +' '+ user?.l_name]"><mat-icon>how_to_reg</mat-icon></a>
+
+                                    @if (user.roles.length) {
+                                        @for (role of user.roles; track $index) {
+                                            @if ((role.name | lowercase) === 'promoter') {
+                                                <a class="btn_pink" mat-mini-fab matTooltip="Allot Shares" [routerLink]="['/company/user/promoter-share', user.slug, user?.f_name +' '+ user?.l_name]"><mat-icon>currency_rupee</mat-icon></a>
+                                            }
+                                        }
+                                      }
+                                </div>
+
+
+                        </tr>
+                    }
+                }@else {
+                    <tr>
+                        <td style="height: 100px; vertical-align:middle;" colspan="5">No Data</td>
+
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

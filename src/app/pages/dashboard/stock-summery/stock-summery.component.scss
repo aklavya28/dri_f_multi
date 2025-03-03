@@ -1,0 +1,39 @@
+.inner_page_table td {
+    border-right: 1px solid #ddd;
+    p{
+        margin: 1px;
+    }
+    p.price {
+        color: #2E7D32;
+        font-size: 16px;
+    }
+}
+.stock_counter {
+    display: flex;
+    gap: 10px;
+    padding: 10px 0;
+    margin-bottom: 15px;
+}
+
+.stock_counter > div {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-flow: column wrap;
+    padding: 12px 10px 0;
+    border-radius: 7px;
+    color: #fff;
+    min-height: 103px;
+    opacity: .8;
+}
+
+.stock_counter > div h2 {
+    font-size: 16px;
+    margin: 0;
+}
+
+.stock_counter > div p {
+    font-size: 26px;
+    font-weight: bold;
+}

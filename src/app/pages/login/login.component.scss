@@ -1,0 +1,114 @@
+
+.inner {
+    display: flex;
+    margin: 0 auto;
+    max-width: 1000px;
+    align-items: center;
+    min-height: 410px;
+    background: #fff;
+    box-shadow: 0 6px 10px #00000033;
+    font-family: "Poppins", sans-serif;
+    position: relative;
+    z-index: 2;
+}
+
+.wrapper_login {
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    background: #086ff7;
+    position: relative;
+}
+.wrapper_login::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: url('../../../assets/images/login.jpg');
+    background-size: cover;
+    background-position: center;
+    opacity: 0.3; /* Set the opacity for the background image */
+    z-index: 1;   /* Ensure the background is behind the content */
+  }
+
+.inner>div {
+    padding: 18px 35px;
+    display: flex;
+    align-items: center;
+    flex-flow: column;
+}
+
+.inner>div:first-child {
+    background: #086ff7;
+    height: 460px;
+    display: flex;
+    align-items: center;
+    text-align: center;
+    width: 500px;
+    justify-content: center;
+}
+
+
+.tagline {margin-top: 10px;color: #fff;font-size: 20px;letter-spacing: 2px;width: 75%;}
+
+.tagline strong {
+    font-size: 28px;
+}
+
+.tagline >div:first-child {
+    text-align: left;
+}
+
+.tagline >div:last-child {
+    text-align: right;
+}
+.inner .field_area {
+    justify-content: flex-start !important;
+    text-align: left;
+}
+
+.field_area h1 {
+    width: 100%;
+    font-size: 26px;
+    margin-bottom: 17px;
+}
+
+.field_area mat-form-field {width: 100%;}
+.primary_btn {
+    background-color: #086ff7 !important;
+    padding: 21px 32px;
+    font-size: 16px;
+    text-transform: uppercase;
+    font-weight: bold;
+}
+@media(max-width: 750px){
+    .inner {
+        flex-flow: column;
+        max-width: calc(100% - 30px);
+    }
+
+    .inner>div:first-child {
+
+        max-width: 100%
+    }
+
+    .inner>div:first-child img {
+        width: 110px;
+    }
+
+    .inner>div:first-child {
+        height: 195px !important;
+        order: 2;
+        margin-top: 10px;
+    }
+    .tagline{
+        width: 100%;
+        font-size: 16px;
+    }
+    .tagline strong {
+        font-size: 19px;
+    }
+
+}

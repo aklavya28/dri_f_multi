@@ -1,0 +1,64 @@
+.acc_info_wrapper {
+    display: flex;
+    gap: 40px;
+    position: relative;
+}
+
+.acc_info_wrapper>div {
+    flex: 1;
+}
+
+.acc_info_wrapper>div>div {
+    display: flex;
+    gap: 23px;
+}
+
+.acc_info_wrapper>div>div>div {
+    /* border: 1px solid; */
+    width: 100%;
+}
+
+.acc_info_wrapper>div>div>div:first-child {
+    text-align: right;
+    font-weight: normal;
+    font-size: 14px;
+    color: #009688;
+    position: relative;
+}
+
+.acc_info_wrapper>div>div>div:last-child {
+    text-align: left;
+    font-weight: normal;
+}
+
+.acc_info_wrapper>div>div>div:first-child::after {
+    content: ":";
+    position: absolute;
+    right: -10px;
+    top: 0;
+    font-weight: bold;
+}
+
+.acc_info_wrapper>div:first-child {
+    position: relative;
+}
+
+.acc_info_wrapper>div:first-child::after {
+    content: "";
+    height: calc(100% + 20px);
+    position: absolute;
+    border-right: 1px solid #c5c5c5;
+    right: 0;
+    top: -10px;
+}
+td {
+    border-right: 1px solid #cdcdcd;
+}
+td:last-child {
+    border: 0;
+}
+.detl_row > td {
+    background: #37477b !important;
+    color: #fff;
+    border-color: #425593;
+}

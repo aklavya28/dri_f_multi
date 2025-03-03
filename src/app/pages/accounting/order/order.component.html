@@ -1,0 +1,1041 @@
+
+
+  <div class="page_wrapper">
+
+    <div class="c_shadow heading_with_btn mb-5">
+      <div class="back_button_heading">
+        <h1 class="heading1"> New <strong>Purchase Order</strong></h1>
+
+      </div>
+      <button mat-flat-button color="primary" (click)="new_khata('khatabook/new-khata')">Create Khata</button>
+
+  </div>
+  <div *ngIf="is_spinner">
+    <div style="position: relative; height: 400px;"> <ngx-spinner bdColor = "rgba(75, 221, 50, 0.8)" color = "#fff" [fullScreen]="false" class="spinner_custom" type="square-jelly-box"></ngx-spinner>
+    </div>
+  </div>
+
+    <form *ngIf="!is_spinner" [formGroup]="newOrderForm" [@enterAnimation]  (submit)="submit()">
+    <!-- <form *ngIf="!is_spinner" [formGroup]="newOrderForm"   (submit)="submit()"> -->
+      @if (item_data.length || this.services_items.length || this.fixedAssets.length) {
+        <div class="table_outer">
+          <table  class="table table-bordered table-striped" >
+            <thead>
+              <tr *ngIf="item_data.length">
+                <th>#</th>
+                <th>Product Name</th>
+                <th>Qty</th>
+                <th>MRP</th>
+                <th>Discount /unit</th>
+                <th>Per Unit Price</th>
+                <th>GST</th>
+                <th>Taxable Amount</th>
+                <th>Amount</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+
+              @for (item of item_data; track $index) {
+                  <tr>
+                    <td>{{$index+1}}</td>
+                    <td>{{item.product_name | uppercase}}</td>
+                    <td>{{item.no_of_unit}}</td>
+                    <td>{{item.mrp}}</td>
+                    <td >{{item.discount  | currency:'INR'}}</td>
+                    <td>{{item.unit_price}}</td>
+                    <td ><span class="badge bg-warning">{{item.gst_percent}} %</span> {{item.gst | currency:'INR' }}</td>
+                    <td>{{ item.taxable | currency:'INR' }}</td>
+                    <td>{{item.total | currency:'INR' }}</td>
+
+                    <td>
+
+                        <button
+                        mat-mini-fab
+                          (click)="removeProduct($index)"
+                          type="button"
+                          color="warn"
+                          class="no_shadow"
+                          >
+                          <mat-icon>delete</mat-icon>
+                       </button>
+
+                    </td>
+                  </tr>
+                }
+                @if (services_items.length) {
+                  <tr >
+                    <td colspan="10"><h4>Services</h4></td>
+                </tr>
+                <tr>
+                  <th>#</th>
+                  <th colspan="5">Product Name</th>
+                  <th>GST</th>
+
+                  <th>Taxable Amount</th>
+                  <th>Amount</th>
+                  <th>Action</th>
+                </tr>
+                @for (item of services_items; track $index) {
+                  <tr>
+                    <td>{{ $index + 1 }}</td>
+                    <td  colspan="5">{{ item.choose_service?.name}}</td>
+                    <td>  <span class="badge bg-warning">{{ item.gst_percent }} %</span>
+                      {{ item.gst | currency : "INR" }}
+                    </td>
+
+                    <td>{{ item.amount | currency:"INR"}}</td>
+                    <td>{{ item.total | currency:"INR"}}</td>
+                    <td>
+                        <button
+                        mat-mini-fab
+                        (click)="removeService($index)"
+                        type="button"
+                        color="warn"
+                        class="no_shadow"
+                        >
+                        <mat-icon>delete</mat-icon>
+                      </button>
+                    </td>
+                  </tr>
+                }
+              }
+
+              @if (fixedAssets.length) {
+                <tr >
+                  <td colspan="10"><h4>Fixed Assets</h4></td>
+              </tr>
+              <tr>
+                <th>#</th>
+                <th colspan="3">Product Name</th>
+                <th>HSN</th>
+                <th>GST</th>
+                <th>Taxable Amount</th>
+                <th>Units</th>
+                <th>Amount</th>
+                <th>Action</th>
+              </tr>
+              @for (item of fixedAssets; track $index) {
+                <tr>
+                  <td>{{ $index + 1 }}</td>
+                  <td  colspan="3">{{ item.name}}</td>
+                  <td >{{ item.hsn}}</td>
+                  <td>  <span class="badge bg-warning">{{ item.gst }} %</span>
+                    {{ item.gst_amount | currency : "INR" }}
+                  </td>
+
+                  <td>{{ item.unit_amount | currency:"INR"}}</td>
+                  <td>{{ item.no_of_unit | currency:"INR"}}</td>
+                  <td>{{ item.total | currency:"INR"}}</td>
+                  <td>
+                      <button
+                      mat-mini-fab
+                      (click)="removeAssets($index)"
+                      type="button"
+                      color="warn"
+                      class="no_shadow"
+                      >
+                      <mat-icon>delete</mat-icon>
+                    </button>
+                  </td>
+                </tr>
+              }
+            }
+
+
+            </tbody>
+            <ng-container *ngIf="billTotal">
+              <tfoot>
+                <tr>
+                  <th colspan="8">Taxable</th>
+                  <th colspan="2">{{billTotal.taxable | currency:"INR"}}</th>
+                </tr>
+
+                <tr>
+                  <th colspan="8">Total Discount</th>
+                  <th colspan="2">{{billTotal.grand_discount | currency:"INR"}}</th>
+                </tr>
+                <tr>
+                  <th colspan="8">Total GST</th>
+                  <th colspan="2">{{billTotal.grand_gst | currency:"INR"}}</th>
+                </tr>
+
+                <tr>
+                  <th colspan="8">Round Off</th>
+                  <th colspan="2">
+                    {{ billTotal.round_off_amount | currency : "INR" }}
+                  </th>
+                </tr>
+                <tr>
+                  <th colspan="8">Other Service charges</th>
+                  <th colspan="2">
+                    {{ billTotal.service_total| currency : "INR" }}
+                  </th>
+                </tr>
+                <tr>
+                  <th colspan="8">Fixed Assets</th>
+                  <th colspan="2">
+                    {{ billTotal.fixed_total| currency : "INR" }}
+                  </th>
+                </tr>
+                <tr>
+                  <th colspan="8">Grand Total</th>
+                  <th colspan="2">{{billTotal.grand_total | currency:"INR"}}</th>
+                </tr>
+              </tfoot>
+
+            </ng-container>
+          </table>
+        </div>
+      }
+
+
+        <div class="button_container" *ngIf="!add_product_btn || !add_service || !show_fixed" [@enterAnimation]>
+            <div *ngIf="!add_product_btn">
+              <button mat-raised-button
+              class="mb-4" color="accent"
+              (click)="openItemForm()"
+              type="button"
+              >
+              <mat-icon>shopping_cart</mat-icon>
+              Add Product</button>
+            </div>
+            <div *ngIf="!add_service">
+              <button  class="mb-4"
+
+              mat-raised-button
+              color="primary"
+              type="button"
+              (click)="AddService()"
+            >
+            <mat-icon>settings</mat-icon>
+              Add Service
+            </button>
+            </div>
+            <div *ngIf="!show_fixed">
+              <button mat-raised-button
+              class="mb-4 btn_green" color="accent"
+
+              (click)="show_fixed_method()"
+              type="button"
+              >
+              <mat-icon>shopping_cart</mat-icon>
+              Add Fixed Asset</button>
+            </div>
+        </div>
+
+
+      @if (add_service) {
+        <div class="input_forms2_main">
+          <div class="c_shadow input_forms2 order_box">
+            <h2 >Add <strong>Service</strong></h2>
+            <div class="muty_inputs" formGroupName="service">
+              <div>
+                <mat-form-field appearance="outline">
+
+                  <mat-label>Choose Service</mat-label>
+                  <mat-select
+
+                    formControlName="choose_service"
+                    (valueChange)="ChangeChooseServie($event)"
+                    [errorStateMatcher]="matcher"
+                  >
+                    @for (item of services_data; track item) {
+                    <mat-option class="choose_service" [value]="item">{{
+                      item.name | uppercase
+                    }}</mat-option>
+                    }
+                  </mat-select>
+                  @if
+                  (newOrderForm.get('service.choose_service')?.hasError('required')) {
+                  <mat-error>Services is <strong>required</strong></mat-error>
+                  }
+                </mat-form-field>
+                <br>
+                {{newOrderForm.get('service.choose_service')?.value?.description}}
+              </div>
+              <div>
+                <mat-form-field appearance="outline">
+                  <mat-label>Amount</mat-label>
+                  <input matInput
+                    formControlName="amount"
+                    type="number"
+                  >
+                  @if(newOrderForm.get('service.amount')?.hasError('required')) {
+                  <mat-error>Amount is <strong>required</strong></mat-error>
+                  }@else if(newOrderForm.get('service.amount')?.hasError('invalidDigit')) {
+                  <mat-error>Invalid <strong>digit</strong></mat-error>
+                  }
+                </mat-form-field>
+              </div>
+              <div>
+                <mat-form-field appearance="outline">
+                  <mat-label>GST %</mat-label>
+                  <input matInput
+                    formControlName="gst"
+                    type="number"
+                    readonly
+                  >
+                </mat-form-field>
+              </div>
+            </div>
+            <div class="btn_area">
+              <a mat-raised-button color="warn" type="button" (click)="cancelService($event)">
+                Cancel
+              </a>
+              <button
+                mat-raised-button
+                color="primary"
+                type="button"
+                (click)="SaveService($event)"
+                [disabled]="this.newOrderForm.get('service')?.status == 'INVALID'"
+              >
+                Add
+              </button>
+            </div>
+          </div>
+        </div>
+      }
+      @if(show_fixed){
+        <div class="input_forms2_main">
+          <div class="c_shadow input_forms2 order_box">
+            <h2 >Add <strong>Fixed Assets</strong></h2>
+            <div class="muty_inputs" formGroupName="fixedAsset">
+
+              <div>
+                <mat-form-field appearance="outline">
+                  <mat-label>Name of Asset</mat-label>
+                  <input matInput
+                    formControlName="name"
+                  >
+                  @if(newOrderForm.get('fixedAsset.name')?.hasError('required')) {
+                  <mat-error>Amount is <strong>required</strong></mat-error>
+                  }@else if(newOrderForm.get('fixedAsset.name')?.hasError('maxlength')) {
+                  <mat-error>Maximum 50 <strong>Charaters</strong></mat-error>
+                  }@else if(newOrderForm.get('fixedAsset.name')?.hasError('alphanumeric')) {
+                    <mat-error>Only Alphanumeric <strong>Charaters</strong></mat-error>
+                    }
+                </mat-form-field>
+              </div>
+
+              <div>
+                <mat-form-field appearance="outline">
+                  <mat-label>HSN NO.</mat-label>
+                  <input matInput
+                    formControlName="hsn"
+                  >
+                </mat-form-field>
+              </div>
+
+              <div>
+                <mat-form-field appearance="outline">
+                  <mat-label>Number of Units</mat-label>
+                  <input matInput
+                    formControlName="no_of_unit"
+                    type="number"
+                  >
+                  @if(newOrderForm.get('fixedAsset.no_of_unit')?.hasError('required')) {
+                  <mat-error>Amount is <strong>required</strong></mat-error>
+                  }@else if(newOrderForm.get('fixedAsset.no_of_unit')?.hasError('invalidDigitD')) {
+                  <mat-error>Invalid <strong>digit</strong></mat-error>
+                  }@else if(newOrderForm.get('fixedAsset.no_of_unit')?.hasError('max')) {
+                  <mat-error>Max <strong>10000</strong></mat-error>
+                  }
+                </mat-form-field>
+              </div>
+              <div>
+                <mat-form-field appearance="outline">
+                  <mat-label>Unit Price</mat-label>
+                  <input matInput
+                    formControlName="unit_amount"
+                    type="number"
+                  >
+                  @if(newOrderForm.get('fixedAsset.unit_amount')?.hasError('required')) {
+                  <mat-error>Amount is <strong>required</strong></mat-error>
+                  }@else if(newOrderForm.get('fixedAsset.unit_amount')?.hasError('invalidDigit')) {
+                  <mat-error>Invalid <strong>digit</strong></mat-error>
+                  }@else if(newOrderForm.get('fixedAsset.unit_amount')?.hasError('max')) {
+                    <mat-error>Max <strong>5000000</strong></mat-error>
+                    }
+                </mat-form-field>
+              </div>
+              <div>
+                <mat-form-field appearance="outline">
+                  <mat-label>GST %</mat-label>
+                  <input matInput
+                    formControlName="gst"
+                    type="number"
+
+                  >
+                  @if(newOrderForm.get('fixedAsset.gst')?.hasError('required')) {
+                    <mat-error>Amount is <strong>required</strong></mat-error>
+                    }@else if(newOrderForm.get('fixedAsset.gst')?.hasError('invalidDigit')) {
+                    <mat-error>Invalid <strong>digit</strong></mat-error>
+                    }@else if(newOrderForm.get('fixedAsset.gst')?.hasError('max')) {
+                      <mat-error>Max <strong>50</strong></mat-error>
+                      }
+                </mat-form-field>
+              </div>
+            </div>
+            <div class="btn_area">
+              <a mat-raised-button color="warn" type="button" (click)="cancelFixed($event)">
+                Cancel
+              </a>
+              <button
+                mat-raised-button
+                color="primary"
+                type="button"
+                (click)="saveFiexed()"
+                [disabled]="this.newOrderForm.get('fixedAsset')?.status == 'INVALID'"
+              >
+                Add
+              </button>
+            </div>
+          </div>
+        </div>
+      }
+
+
+      <!-- {{this.newOrderForm.get('service')?.value | json}} -->
+
+      @if (add_product_btn ) {
+        <div class="input_forms2_main mt-4" [@enterAnimation] >
+          <div class="c_shadow input_forms2 order_box">
+            <h2 >Add <strong>Product</strong></h2>
+            <ng-container formGroupName="product_f">
+              <div>
+                <mat-form-field appearance="outline">
+                  <mat-label>Choose Category</mat-label>
+                  <mat-select
+                  formControlName="category_id"
+                  (valueChange)="get_productsdata($event)"
+                  [errorStateMatcher]="matcher"
+                   >
+
+                   <mat-option *ngFor="let item of product_categories" value="{{item.id}}">{{item.name}}</mat-option>
+
+
+                </mat-select>
+                @if (newOrderForm.get('product_f.category_id')?.hasError('required')) {
+                    <mat-error>Category type is <strong>required</strong></mat-error>
+                  }
+                </mat-form-field>
+              </div>
+              <!-- <div>
+                <mat-form-field>
+                  <mat-label>Choose Product</mat-label>
+                  <mat-select
+                  formControlName="product_name"
+                  [errorStateMatcher]="matcher"
+                   >
+                  @if(api_products){
+
+
+                    <mat-option *ngFor="let item of api_products" value="{{item |json}} ">
+                      <div>
+                        Name:  {{item.name}} <br>
+                        <ng-container *ngIf="item.hsn_sac">HSN/SAC:  {{item.hsn_sac}}</ng-container> <br>
+                        <ng-container *ngIf="item.description">Description:  {{item.description}}</ng-container>
+                      </div>
+                    </mat-option>
+
+                  }@else{
+                    <mat-option >No data</mat-option>
+                  }
+
+
+                </mat-select>
+                @if (newOrderForm.get('product_f.product_name')?.hasError('required')) {
+                  <mat-error>Product   type is <strong>required</strong></mat-error>
+                }
+                </mat-form-field>
+              </div> -->
+
+              <div>
+
+                <mat-form-field appearance="outline">
+                  <mat-label>Choose Product</mat-label>
+                  <input type="text"
+                         placeholder="Pick one"
+                         aria-label="Number"
+                         formControlName="product_name"
+
+                         matInput
+
+
+                         [matAutocomplete]="auto">
+                  <mat-autocomplete #auto (optionSelected)="onOptionSelect($event.option.value)">
+                    @for (option of filteredCat | async; track option) {
+                      <!-- <mat-option  [value]="option.name+','+option.hsn_sac +','+ option.id">{{option.id}}/{{(option.name +'/'+ option.hsn_sac) | uppercase}}</mat-option> -->
+                      <mat-option  [value]="option">{{(option.name +'/'+ option.part_no) | uppercase}}</mat-option>
+
+                    }
+
+                  </mat-autocomplete>
+                  @if (newOrderForm.get('product_f.product_name')?.hasError('required')) {
+                    <mat-error>Product is <strong>required</strong></mat-error>
+                  }@else if (newOrderForm.get('product_f.product_name')?.hasError('match')) {
+                    <mat-error>No Product is <strong>selected</strong></mat-error>
+                  }
+                </mat-form-field>
+
+              </div>
+
+
+
+              <div>
+                <mat-form-field appearance="outline">
+                  <mat-label>Number of Unit</mat-label>
+                  <input matInput
+                  formControlName="no_of_unit"
+                  [errorStateMatcher]="matcher"
+                  >
+                  @if(newOrderForm.get('product_f.no_of_unit')?.hasError('required')) {
+                    <mat-error>Unit is <strong>required</strong></mat-error>
+                  }@else if(newOrderForm.get('product_f.no_of_unit')?.hasError('invalidDigitD')) {
+                    <mat-error>Only valid <strong>Number</strong></mat-error>
+                  }
+              </mat-form-field>
+
+            </div>
+              <div>
+                <mat-form-field appearance="outline">
+                  <mat-label>Price per Unit</mat-label>
+                  <input matInput
+                  formControlName="unit_price"
+                  [errorStateMatcher]="matcher"
+                  (change)="price_change($event.target)"
+                  >
+                  @if(newOrderForm.get('product_f.unit_price')?.hasError('required')) {
+                    <mat-error>Unit price is <strong>required</strong></mat-error>
+                  }@else if(newOrderForm.get('product_f.unit_price')?.hasError('invalidDigit')) {
+                    <mat-error>Only valid <strong>Number</strong></mat-error>
+                  }
+              </mat-form-field>
+              <!-- {{newOrderForm.get('product_f.unit_price')?.errors | json}} -->
+            </div>
+              <div>
+                <mat-form-field appearance="outline">
+                  <mat-label>MRP</mat-label>
+                  <input matInput
+                  formControlName="mrp"
+                  [errorStateMatcher]="matcher"
+                  >
+                  @if(newOrderForm.get('product_f.mrp')?.hasError('required')) {
+                    <mat-error>MRP  is <strong>required</strong></mat-error>
+                  }@else if(newOrderForm.get('product_f.mrp')?.hasError('pattern')) {
+                    <mat-error>Only valid <strong>Number</strong></mat-error>
+                  }
+              </mat-form-field>
+            </div>
+
+              <div>
+                <mat-form-field appearance="outline">
+                  <mat-label>GST(%)</mat-label>
+                  <input matInput
+                  formControlName="gst"
+                  [errorStateMatcher]="matcher"
+                  >
+
+              </mat-form-field>
+            </div>
+            <div>
+
+              <mat-form-field appearance="outline">
+                <mat-label>Expiry Date</mat-label>
+                <input matInput [matDatepicker]="picker" formControlName="expired_date">
+                <mat-hint>MM/DD/YYYY</mat-hint>
+                <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+                <mat-datepicker #picker></mat-datepicker>
+              </mat-form-field>
+            </div>
+              <!-- <div>
+                <mat-form-field>
+                  <mat-label>Discount per unit</mat-label>
+                  <input matInput
+                  formControlName="discount"
+                  [errorStateMatcher]="matcher"
+                  >
+
+                  @if(newOrderForm.get('product_f.discount')?.hasError('pattern')) {
+                    <mat-error>Only valid <strong>Number</strong></mat-error>
+                  }
+                  @if(newOrderForm.get('product_f.discount')?.hasError('max')) {
+                    <mat-error>Not more then product price <strong>{{this.newOrderForm.get('product_f.unit_price')?.value}}</strong></mat-error>
+                  }
+              </mat-form-field>
+            </div> -->
+            </ng-container>
+            <div class="btn_area">
+
+              <button mat-raised-button color="warn" type="button" (click)="cancelProductAdd()">cancel</button>
+              <button mat-raised-button color="accent"
+              (click)="addtoStock()"
+              [disabled]="this.newOrderForm.get('product_f')?.status == 'INVALID'"
+              type="button"
+              >Add</button>
+            </div>
+
+          </div>
+        </div>
+
+      }
+      <!-- <div class="input_forms2_main mt-4">
+        <div class="c_shadow input_forms2">
+          <h2>Other <strong>Charges</strong></h2>
+
+          <div>
+            <mat-checkbox class="example-margin"
+              formControlName="freight_charges"
+              color="primary"
+              (change)="freightChange($event.checked)"
+            >Other Charges</mat-checkbox>
+
+          </div>
+          <div class="chares_remarks" *ngIf="newOrderForm.get('freight_charges')?.value" [@enterAnimation]  >
+            <div  *ngIf="newOrderForm.get('freight_amt') && newOrderForm.get('freight_charges')?.value">
+
+              <mat-form-field>
+                <mat-label>Other Charges</mat-label>
+                <input matInput
+                formControlName="freight_amt"
+                (change)="inputChange()"
+                >
+                @if (newOrderForm.get('freight_amt')?.hasError('required')) {
+                  <mat-error>Other Amount is <strong>required</strong></mat-error>
+                }
+                @if (newOrderForm.get('freight_amt')?.hasError('invalidDigit')) {
+                  <mat-error>Only Valid <strong>digits</strong></mat-error>
+                }
+
+              </mat-form-field>
+
+
+            </div>
+
+            <div *ngIf="newOrderForm.get('freight_sgst') && newOrderForm.get('freight_charges')?.value">
+              <mat-form-field>
+                <mat-label>Other Charges SGST%</mat-label>
+                <input matInput
+                formControlName="freight_sgst"
+                (change)="inputChange()"
+                >
+                @if (newOrderForm.get('freight_sgst')?.hasError('required')) {
+                  <mat-error>GST Amount is <strong>required</strong></mat-error>
+                }
+                @if (newOrderForm.get('freight_sgst')?.hasError('invalidDigit')) {
+                  <mat-error>Only Valid <strong>digit</strong></mat-error>
+                }
+                @if (newOrderForm.get('freight_sgst')?.hasError('max')) {
+                  <mat-error>Maximum <strong>30 %</strong></mat-error>
+                }
+              </mat-form-field>
+
+            </div>
+            <div *ngIf="newOrderForm.get('freight_cgst') && newOrderForm.get('freight_charges')?.value">
+
+
+              <mat-form-field>
+                <mat-label>Other Charges CGST%</mat-label>
+                <input matInput
+                formControlName="freight_cgst"
+                (change)="inputChange()"
+                >
+                @if (newOrderForm.get('freight_cgst')?.hasError('required')) {
+                  <mat-error>GST Amount is <strong>required</strong></mat-error>
+                }
+                @if (newOrderForm.get('freight_cgst')?.hasError('invalidDigit')) {
+                  <mat-error>Only Valid <strong>digit</strong></mat-error>
+                }
+                @if (newOrderForm.get('freight_cgst')?.hasError('max')) {
+                  <mat-error>Maximum <strong>30 %</strong></mat-error>
+                }
+
+              </mat-form-field>
+
+
+
+
+            </div>
+            <div *ngIf="newOrderForm.get('freight_igst') && newOrderForm.get('freight_charges')?.value">
+
+
+              <mat-form-field>
+                <mat-label>Other Charges IGST%</mat-label>
+                <input matInput
+                formControlName="freight_igst"
+                (change)="inputChange()"
+                >
+                @if (newOrderForm.get('freight_igst')?.hasError('required')) {
+                  <mat-error>GST Amount is <strong>required</strong></mat-error>
+                }
+                @if (newOrderForm.get('freight_igst')?.hasError('invalidDigit')) {
+                  <mat-error>Only Valid <strong>digit</strong></mat-error>
+                }
+                @if (newOrderForm.get('freight_igst')?.hasError('max')) {
+                  <mat-error>Maximum <strong>30 %</strong></mat-error>
+                }
+
+              </mat-form-field>
+
+
+
+
+            </div>
+            <div *ngIf="newOrderForm.get('freight_remarks') && newOrderForm.get('freight_charges')?.value">
+
+
+              <mat-form-field>
+                <mat-label>Charges Service name</mat-label>
+                <input matInput
+                formControlName="freight_remarks"
+                >
+                @if (newOrderForm.get('freight_remarks')?.hasError('required')) {
+                  <mat-error>Other Charges Amount is <strong>required</strong></mat-error>
+                }
+                @if (newOrderForm.get('freight_remarks')?.hasError('maxlength')) {
+                  <mat-error>Maximum length <strong>40 Characters</strong></mat-error>
+                }
+                @if (newOrderForm.get('freight_remarks')?.hasError('alphanumeric')) {
+                  <mat-error>Only vaild  <strong>alphanumeric</strong></mat-error>
+                }
+
+              </mat-form-field>
+
+
+
+
+            </div>
+          </div>
+
+
+        </div>
+      </div> -->
+      <div class="input_forms2_main mt-4">
+        <div class="c_shadow input_forms2">
+          <h2>Over all <strong>Discount</strong></h2>
+
+
+                <div class="full">
+                  <mat-radio-group aria-label="Discount"
+                    formControlName="is_discount"
+                    color="primary"
+                    (change)="discount_change($event.value)"
+                  >
+                  <mat-label>Discount</mat-label> <br>
+                    <mat-radio-button [checked]="true" value="0">No</mat-radio-button>
+                    <mat-radio-button value="1">Yes</mat-radio-button>
+
+                  </mat-radio-group>
+              </div>
+              <ng-container *ngIf="newOrderForm.get('is_discount')?.value == true">
+                <div >
+
+                  <mat-form-field appearance="outline">
+                    <mat-label>Discount %</mat-label>
+                    <input matInput
+                    maxlength="4"
+                    formControlName="orver_all_discount"
+                    >
+                    @if (newOrderForm.get('orver_all_discount')?.hasError('required')) {
+                      <mat-error>Discount is <strong>required</strong></mat-error>
+                    }@else if (newOrderForm.get('orver_all_discount')?.hasError('max')) {
+                      <mat-error>Maximum <strong>80</strong></mat-error>
+                    }@else if (newOrderForm.get('orver_all_discount')?.hasError('invalidDigit')) {
+                      <mat-error>Invalid  <strong>Digit</strong></mat-error>
+                    }
+
+
+                  </mat-form-field>
+                </div>
+                <div>
+                  <button mat-flat-button color="primary"
+                  [disabled]="this.newOrderForm.get('orver_all_discount')?.status == 'INVALID'"
+                  type="button" (click)="apply_discount()" > Apply</button>
+
+                </div>
+              </ng-container>
+
+
+
+
+        </div>
+      </div>
+      <div class="input_forms2_main mt-4">
+        <div class="c_shadow input_forms2">
+          <h2>Round <strong>Order</strong></h2>
+
+          <div>
+            <mat-checkbox class="example-margin"
+              formControlName="round_off"
+              color="primary"
+              (change)="roundOffChange($event.checked)"
+            >Round Off Order</mat-checkbox>
+
+          </div>
+          <div class="chares_remarks">
+            <div *ngIf="newOrderForm.get('round_off')?.value">
+
+              <mat-form-field appearance="outline">
+                <mat-label>Round Off Amount</mat-label>
+                <input matInput
+                formControlName="round_off_amt"
+                (change)="inputChange()"
+                >
+                @if (newOrderForm.get('round_off_amt')?.hasError('required')) {
+                  <mat-error>Amount is <strong>required</strong></mat-error>
+                }
+                @else if (newOrderForm.get('round_off_amt')?.hasError('invalidDigit')) {
+                  <mat-error>Only Valid <strong>digits</strong></mat-error>
+                }@else if (newOrderForm.get('round_off_amt')?.hasError('max')) {
+                  <mat-error>Maximum <strong>{{ 500 | currency:"INR"}}</strong></mat-error>
+                }
+
+              </mat-form-field>
+
+              {{newOrderForm.get('round_off_amt')?.value}}
+            </div>
+
+
+          </div>
+
+
+        </div>
+      </div>
+
+      <div class="input_forms2_main mt-4">
+        <div class="c_shadow input_forms2">
+          <h2>Payment <strong>Information</strong></h2>
+          <div>
+            <mat-form-field  appearance="outline">
+              <mat-label>Credit From</mat-label>
+              <mat-select
+              formControlName="credit_from"
+              [errorStateMatcher]="matcher"
+              (valueChange)="credit_from_change()"
+              multiple
+              >
+              @if(liquid.length){
+                @for (item of liquid; track $index) {
+                  <mat-option  [value]="item.name" >{{item.name | uppercase}} Bal: {{item.balance | currency:"INR"}}</mat-option>
+                }
+              }
+              <mat-option value="creditor">Creditor</mat-option>
+               <!-- <mat-option value="cash">Cash</mat-option>
+               <mat-option value="bank">Bank book</mat-option> -->
+
+            </mat-select>
+            <!-- {{newOrderForm.get('credit_from')?.value | json}} -->
+            @if (newOrderForm.get('credit_from')?.hasError('required')) {
+                <mat-error>Credit type is <strong>required</strong></mat-error>
+              }
+            </mat-form-field>
+
+          </div>
+
+            <ng-container formArrayName="credit_fromInputs">
+              <div *ngFor="let group of credit_fromInputs.controls; let i = index" [formGroupName]="i">
+                <mat-form-field appearance="outline">
+                  <mat-label>Amount For {{ group.get('name')?.value | uppercase}}</mat-label>
+                  <input matInput formControlName="value" maxlength="11" required>
+                  <!-- <mat-error *ngIf="group.get('value')?.hasError('required')">This field is required</mat-error>
+                  <mat-error *ngIf="group.get('value')?.hasError('invalidDigit')">Invalid <strong>Digit</strong></mat-error> -->
+                  @if (group.get('value')?.hasError('required')) {
+                    <mat-error>This field is required</mat-error>
+                  }@else if (group.get('value')?.hasError('invalidDigit')) {
+                    <mat-error>Invalid <strong>Digit</strong></mat-error>
+                  }
+                </mat-form-field>
+              </div>
+            </ng-container>
+        </div>
+      </div>
+      <div class="input_forms2_main">
+        <div class="c_shadow input_forms2">
+          <h2>Order <strong>Information</strong></h2>
+          <!-- <div>
+            <mat-form-field>
+              <mat-label>{{input_leder_vender}}</mat-label>
+              <mat-select
+              formControlName="lenders"
+              [errorStateMatcher]="matcher"
+
+              (selectionChange)="khataChangeAction($event)"
+               >
+              @if(liquid.length){
+                @for (item of lenders_api; track $index) {
+                  <mat-option   [value]="item.id+','+ (item.dr_number ? item.cr_number : 'no creditor')+','+ item.mobile" >{{item.name | uppercase}}<span *ngIf="item?.cr_number"> a/c: {{item.cr_number | uppercase}}</span>  </mat-option>
+                }
+              }
+
+
+            </mat-select>
+            @if (newOrderForm.get('lenders')?.hasError('required')) {
+                <mat-error>{{input_leder_vender}} is <strong>required</strong></mat-error>
+              }
+            </mat-form-field>
+          </div> -->
+
+          <div *ngIf="khata.length">
+            <mat-form-field appearance="outline" >
+              <mat-label>{{input_leder_vender}}</mat-label>
+              <input type="text"
+                     placeholder="Pick one"
+                     aria-label="Number"
+                     formControlName="lenders"
+                     matInput
+                     [matAutocomplete]="auto">
+              <mat-autocomplete #auto (optionSelected)="onOptionSelectLander($event.option.value)">
+                @for (option of filteredKhata | async; track option) {
+                  <!-- <mat-option  [value]="option.name+','+option.id">{{option.name  | uppercase}}</mat-option> -->
+                  <mat-option class="custom_select"  [value]="option">{{(option.name +" / "+ option?.ledger_name ) | uppercase}}</mat-option>
+                }
+
+              </mat-autocomplete>
+              @if (newOrderForm.get('lenders')?.hasError('required')) {
+                <mat-error>Khata is <strong>required</strong></mat-error>
+              }@else if(newOrderForm.get('lenders')?.hasError('match')) {
+                <mat-error>No Khata is <strong>selected</strong></mat-error>
+              }
+            </mat-form-field>
+
+          </div>
+
+
+
+
+
+          <div>
+            <mat-form-field appearance="outline">
+              <mat-label>Order Date</mat-label>
+              <input matInput [matDatepicker]="picker"
+              formControlName="order_date"
+              [errorStateMatcher]="matcher"
+              >
+              <!-- <mat-hint>MM/DD/YYYY</mat-hint> -->
+              <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+              <mat-datepicker #picker></mat-datepicker>
+
+              @if (newOrderForm.get('order_date')?.hasError('required')) {
+                <mat-error>Order date  is <strong>required</strong></mat-error>
+              }
+
+            </mat-form-field>
+          </div>
+          <div>
+            <mat-form-field appearance="outline">
+              <mat-label>Vehical Number</mat-label>
+              <input matInput type="text"
+              formControlName="vehical_no"
+              [errorStateMatcher]="matcher"
+              maxlength="15"
+              />
+
+              @if (newOrderForm.get('vehical_no')?.hasError('required')) {
+                <mat-error>Vechical Numeber is <strong>required</strong></mat-error>
+              }
+              @if (newOrderForm.get('vehical_no')?.hasError('pattern')) {
+                <mat-error>Enter valid <strong>number</strong></mat-error>
+              }
+            </mat-form-field>
+          </div>
+          <div>
+            <mat-form-field appearance="outline">
+              <mat-label>Mobile Number</mat-label>
+              <input type="text" matInput
+                formControlName="mobile_no"
+              [errorStateMatcher]="matcher"
+              (ngModelChange)="onMobileChange($event)"
+              maxlength="10"
+              >
+              <!-- <mat-hint>Errors appear instantly!</mat-hint> -->
+
+              @if (newOrderForm.get('mobile_no')?.hasError('invalidDigit')) {
+                <mat-error>Invalid Mobile<strong> Number</strong></mat-error>
+              }
+              @if (newOrderForm.get('mobile_no')?.hasError('minlength')) {
+                <mat-error>Min 10<strong>Digits</strong></mat-error>
+              }@if (newOrderForm.get('mobile_no')?.hasError('maxlength')) {
+                <mat-error>max 10<strong>Digits</strong></mat-error>
+              }
+            </mat-form-field>
+            <!-- {{newOrderForm.get('mobile_no')?.errors |json }} -->
+          </div>
+          <div>
+            <mat-form-field appearance="outline">
+              <mat-label>IRN Number</mat-label>
+              <input type="text" matInput
+                formControlName="irn_no"
+                [errorStateMatcher]="matcher"
+                maxlength="64"
+              >
+              <!-- <mat-hint>Errors appear instantly!</mat-hint> -->
+              @if (newOrderForm.get('irn_no')?.hasError('required')) {
+                <mat-error>IRN Numeber is <strong>required</strong></mat-error>
+              }
+
+            </mat-form-field>
+
+          </div>
+          <div>
+            <mat-form-field appearance="outline">
+              <mat-label>ACK Number</mat-label>
+              <input type="text" matInput
+                formControlName="ack_no"
+                [errorStateMatcher]="matcher"
+                maxlength="60"
+                >
+              <!-- <mat-hint>Errors appear instantly!</mat-hint> -->
+              @if (newOrderForm.get('ack_no')?.hasError('required')) {
+                <mat-error>ACK Number is <strong>required</strong></mat-error>
+              }
+
+            </mat-form-field>
+
+          </div>
+          <div>
+            <mat-radio-group aria-label="Auto Approved"
+              formControlName="auto_approve"
+              color="primary"
+
+            >
+            <mat-label>Auto Approved</mat-label> <br>
+              <mat-radio-button [checked]="true" value="0">No</mat-radio-button>
+              <mat-radio-button value="1">Yes</mat-radio-button>
+
+            </mat-radio-group>
+          </div>
+        </div>
+      </div>
+      <div class="input_forms2_main" *ngIf="api_errors.length">
+        <div class="error" *ngFor="let item of api_errors">
+          <p>{{item}}</p>
+        </div>
+      </div>
+
+        <!-- @if (!this.newOrderForm.get('apply_validation')?.value && item_data.length ) {
+
+          <button mat-raised-button color="primary"
+            type="submit"
+            [disabled]="this.newOrderForm.status == 'INVALID' "
+          >Save</button>
+        } -->
+        <!-- <button mat-raised-button color="primary"
+            type="submit"
+
+          >Save</button>
+
+            {{newOrderForm.value | json}} -->
+            <button
+            mat-raised-button
+            color="primary"
+            type="submit"
+            [disabled]="((item_data.length || services_items.length || fixedAssets.length) && this.newOrderForm.status === 'INVALID')"
+          >
+             Save
+          </button>
+  </form>
+
+
+  </div>
+

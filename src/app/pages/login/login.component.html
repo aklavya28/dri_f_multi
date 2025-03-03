@@ -1,0 +1,74 @@
+
+<div class="wrapper_login">
+    <div class="inner">
+        <div>
+            <img src="../../../assets/images/targeted.png" alt="">
+            <div class="tagline">
+                <div>Simplify Your <strong>Finances</strong></div>
+                <div>Empower Your <strong>Business</strong></div>
+            </div>
+
+        </div>
+        <div  class="field_area">
+            <h1>Sign <strong>In</strong></h1>
+        <div>
+            <form [formGroup]="loginForm" (submit)="login()" >
+
+                <div>
+
+                    <div>
+                        <mat-form-field class="example-full-width" appearance="outline">
+
+                            <mat-label>Email</mat-label>
+                            <input type="email" matInput
+                            formControlName="email"
+                             placeholder="Ex. pat@example.com">
+                             <mat-icon  matPrefix>email</mat-icon>
+                            @if(loginForm.get('email')?.hasError('required')) {
+                                <mat-error >Email is <strong>required</strong></mat-error>
+                              }@else if (loginForm.get('email')?.hasError('email')) {
+                                <mat-error >Wrong <strong>email format</strong></mat-error>
+                              }
+
+                          </mat-form-field>
+                    </div>
+
+                    <div>
+                        <mat-form-field appearance="outline">
+                            <mat-label>Password</mat-label>
+                            <mat-icon  matPrefix>lock</mat-icon>
+                            <input matInput [type]="hide ? 'password' : 'text'" formControlName="password">
+                            <button mat-icon-button matSuffix (click)="togglePasswordVisibility($event)" [attr.aria-label]="'Hide/Show password'" [attr.aria-pressed]="hide">
+                              <mat-icon>{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
+                            </button>
+                            @if(loginForm.get('password')?.hasError('required')) {
+                                <mat-error >Email is <strong>required</strong></mat-error>
+                              }
+                          </mat-form-field>
+                    </div>
+
+                </div>
+
+                <div class="button_area">
+                    <button mat-flat-button color="primary"
+                    type="submit"
+                    class="primary_btn"
+                    [disabled]="loginForm.status == 'INVALID'">LOGIN</button>
+                </div>
+                @if (login_erros) {
+                    <div class="error"><p>
+                        {{login_erros}}
+                    </p></div>
+                }
+            </form>
+
+
+        </div>
+        </div>
+    </div>
+
+
+
+
+</div>
+

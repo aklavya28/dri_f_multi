@@ -1,0 +1,25 @@
+.header>div {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    background: #fff;
+    padding: 10px 10px 1px;
+    border-radius: 5px;
+    margin-bottom: 22px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2784313725);
+}
+.field_area {
+    background: white;
+    margin-bottom: 15px;
+    padding: 10px 10px 2px;
+    border-radius: 5px;
+    display: flex;
+    gap: 15px;
+    flex-flow: row wrap;
+}
+
+
+.field_area mat-form-field {
+    min-width: 287px;
+}
+.textarea{min-width: 500px !important;}

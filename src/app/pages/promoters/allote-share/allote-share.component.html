@@ -1,0 +1,210 @@
+
+<!-- <ng-multiselect-dropdown
+  class="form-control"
+  [placeholder]="'custom placeholder'"
+  [settings]="dropdownSettings"
+  [data]="dropdownList"
+  [(ngModel)]="selectedItems"
+  (onSelect)="onItemSelect($event)"
+  (onSelectAll)="onSelectAll($event)"
+>
+</ng-multiselect-dropdown> -->
+
+<div class="wrapper">
+    <div class="custem_card">
+      <div class="c_card_header">
+          Allocate Promoter Shares
+
+      </div>
+      <div class="c_card_body">
+        <form [formGroup]="promoterShareForm" (submit)="addPromoterShareForm()">
+          <div class="field_area">
+            <div>
+              <label > Choose Promoter</label>
+              <ng-multiselect-dropdown
+              class="form-control"
+              [placeholder]="'Choose Promoter'"
+              [settings]="dropdownSettings"
+              [data]="dropdownList"
+              formControlName="choose_promoter"
+
+              (onSelect)="onItemSelect($event)"
+              (onSelectAll)="onSelectAll($event)"
+
+            >
+
+            </ng-multiselect-dropdown>
+
+            @if( _e_allotment_date ){
+                <mat-error style="font-size:12px; padding-left:15px">Field is <strong>required</strong></mat-error>
+            }
+
+            </div>
+
+              <!-- <label >Allotment Date</label> -->
+              <div>
+
+               <mat-form-field class="example-full-width">
+                  <mat-label>Choose a date</mat-label>
+                  <input matInput [matDatepicker]="picker"
+                    placeholder="MM/DD/YYYY"
+                    formControlName="allotment_date"
+                    [errorStateMatcher]="matcher"
+                  >
+                  <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+                  <mat-datepicker #picker></mat-datepicker>
+                  @if (f['allotment_date'].hasError('required')) {
+                    <mat-error>Date is <strong>required</strong></mat-error>
+
+                  }
+
+                </mat-form-field>
+
+
+              </div>
+              <div>
+                <mat-form-field class="example-full-width">
+                  <mat-label>Number of Shares</mat-label>
+                  <input matInput #postalCode maxlength="5" placeholder="Ex. 94105" value="94043"
+                    type="number"
+                    formControlName="no_of_shars"
+                    [errorStateMatcher]="matcher"
+                    >
+                  <!-- <mat-hint align="end">{{postalCode.value.length}} / 5</mat-hint> -->
+                  @if (f['no_of_shars'].hasError('required')) {
+                    <mat-error>Share is <strong>required</strong></mat-error>
+                  }@if (f['no_of_shars'].hasError('min')) {
+                    <mat-error>Share must be morethen <strong>0</strong></mat-error>
+                  }
+                </mat-form-field>
+
+              </div>
+              <div >
+                <!-- {{ api_share_val * f['no_of_shars'].value}} -->
+                <mat-form-field class="example-full-width">
+                  <mat-label>Share Value</mat-label>
+                  <input matInput #share_val maxlength="5"
+                    type="number"
+                    value="{{  api_share_val * f['no_of_shars'].value}}"
+                    formControlName="share_val"
+                    [errorStateMatcher]="matcher"
+
+                    >
+                  <mat-hint align="end">{{api_share_val}} X  Number of shares</mat-hint>
+                  @if (f['no_of_shars'].hasError('required')) {
+                    <mat-error>Share is <strong>required</strong></mat-error>
+                  }
+                </mat-form-field>
+
+              </div>
+              <div>
+                <mat-form-field>
+                  <mat-label>Choose Category</mat-label>
+                  <mat-select
+                  formControlName="payment_mode"
+                  [errorStateMatcher]="matcher"
+                   >
+
+                   <mat-option value="bank">Bank</mat-option>
+                   <mat-option value="cash">Cash</mat-option>
+                   <mat-option value="cheque">Cheque</mat-option>
+
+
+                </mat-select>
+                @if (promoterShareForm.get('payment_mode')?.hasError('required')) {
+                    <mat-error>Payment mode is <strong>required</strong></mat-error>
+                  }
+                </mat-form-field>
+              </div>
+              <div *ngIf="bank_group_show" class="cheque_group">
+                <ng-container formGroupName="bank_group">
+
+                  <span>
+                    <mat-form-field class="example-full-width">
+                      <mat-label>Name of Bank</mat-label>
+                      <input matInput #share_val maxlength="50"
+                        type="text"
+                        formControlName="name_of_bank"
+                        [errorStateMatcher]="matcher"
+
+                        >
+                      <!-- <mat-hint align="end">{{api_share_val}} X  Number of shares</mat-hint> -->
+                      @if (promoterShareForm.get('bank_group.name_of_bank')?.hasError('required')) {
+                        <mat-error>Name of bank is <strong>required</strong></mat-error>
+                      }
+                    </mat-form-field>
+                  </span>
+                  <span>
+                    <mat-form-field class="example-full-width">
+                      <mat-label>UTR Number</mat-label>
+                      <input matInput #share_val maxlength="50"
+                        type="text"
+                        formControlName="utr_no"
+                        [errorStateMatcher]="matcher"
+
+                        >
+                      <!-- <mat-hint align="end">{{api_share_val}} X  Number of shares</mat-hint> -->
+                      @if (promoterShareForm.get('bank_group.utr_no')?.hasError('required')) {
+                        <mat-error>UTR number is <strong>required</strong></mat-error>
+                      }
+                    </mat-form-field>
+                  </span>
+                </ng-container>
+              </div>
+
+              <div *ngIf="cheque_group_show" class="cheque_group">
+                <ng-container formGroupName="cheque_group">
+
+                  <span>
+                    <mat-form-field class="example-full-width">
+                      <mat-label>Name of Bank</mat-label>
+                      <input matInput #share_val maxlength="50"
+                        type="text"
+                        formControlName="name_of_bank"
+                        [errorStateMatcher]="matcher"
+
+                        >
+                      <!-- <mat-hint align="end">{{api_share_val}} X  Number of shares</mat-hint> -->
+                      @if (promoterShareForm.get('cheque_group.name_of_bank')?.hasError('required')) {
+                        <mat-error>Name of bank is <strong>required</strong></mat-error>
+                      }
+                    </mat-form-field>
+                  </span>
+                  <span>
+                    <mat-form-field class="example-full-width">
+                      <mat-label>Cheque Number</mat-label>
+                      <input matInput #share_val maxlength="50"
+                        type="text"
+                        formControlName="cheque_no"
+                        [errorStateMatcher]="matcher"
+
+                        >
+                      <!-- <mat-hint align="end">{{api_share_val}} X  Number of shares</mat-hint> -->
+                      @if (promoterShareForm.get('cheque_group.cheque_no')?.hasError('required')) {
+                        <mat-error>Cheque number is <strong>required</strong></mat-error>
+                      }
+                    </mat-form-field>
+                  </span>
+                </ng-container>
+              </div>
+
+            </div>
+
+            <div class="button_ara">
+              <mat-spinner *ngIf="isLoading"></mat-spinner>
+            </div>
+          <button mat-button type="submit">Basic</button>
+          <button mat-raised-button color="primary"
+            type="submit"
+            [disabled]="this.promoterShareForm.status == 'INVALID'"
+          >Save</button>
+          <!-- {{promoterShareForm.value | json}} -->
+        </form>
+
+      </div>
+      <div class="c_card_footer"></div>
+    </div>
+
+
+</div>
+

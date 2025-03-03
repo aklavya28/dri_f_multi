@@ -1,0 +1,102 @@
+<div class="page_wrapper">
+    <div class="heading_with_btn">
+        <div>
+            <h1 class="heading1">Advance <strong>Salary</strong></h1>
+        </div>
+
+    </div>
+    <div>
+        <form [formGroup]="salaryForm" (submit)="submit()">
+          <div class="c_shadow input_forms">
+
+            <div>
+
+              <mat-form-field appearance="outline">
+                  <mat-label>Choose Employee</mat-label>
+                  <mat-select  (selectionChange)="employee_slug($event)"
+                   disableRipple
+                    formControlName="employee_id_main"
+                  >
+                  @for (item of employees; track $index) {
+                    <mat-option [value]="item">
+                      Name: {{item.full_name }} <br>
+                      Mobile: {{item.mobile }} <br>
+
+                      </mat-option>
+                   }
+                  </mat-select>
+                  @if(salaryForm.get('item')?.get('employee_id_main')?.hasError('required')) {
+                    <mat-error>Allowance is <strong>required</strong></mat-error>
+                  }
+                </mat-form-field>
+            </div>
+
+                <div>
+                  <mat-form-field appearance="outline">
+                      <mat-label>Amount</mat-label>
+                      <input type="number"
+                      min="1000"
+                      max="1000000"
+                       matInput
+                          formControlName="amount"
+                      >
+                      @if(salaryForm.get('amount')?.hasError('required')) {
+                          <mat-error> Amout is <strong>required</strong></mat-error>
+                        }
+                        @if(salaryForm.get('amount')?.hasError('min')) {
+                          <mat-error> Minimum Amout morethen <strong>1000</strong></mat-error>
+                        }
+                      @if(salaryForm.get('amount')?.hasError('max')) {
+                          <mat-error> Maximum Amout lessthen <strong>10,00,000</strong></mat-error>
+                        }
+                    </mat-form-field>
+                </div>
+                <div>
+                  <mat-form-field appearance="outline">
+                      <mat-label>Tenure in months</mat-label>
+                      <input type="number"
+                      min="1"
+                      max="12"
+
+                       matInput
+                          formControlName="tenure"
+                      >
+                      @if(salaryForm.get('tenure')?.hasError('required')) {
+                          <mat-error> Amout is <strong>required</strong></mat-error>
+                        }
+                        @if(salaryForm.get('tenure')?.hasError('min')) {
+                          <mat-error> Minimum tenure morethen <strong>1</strong></mat-error>
+                        }
+                      @if(salaryForm.get('tenure')?.hasError('max')) {
+                          <mat-error> Maximum tenure lessthen <strong>13</strong></mat-error>
+                        }@if(salaryForm.get('tenure')?.hasError('pattern')) {
+                          <mat-error> Only Vaild  <strong>Digit</strong></mat-error>
+                        }
+                    </mat-form-field>
+                    <!-- {{salaryForm.get('tenure')?.errors | json}} -->
+                </div>
+                <div>
+                  <mat-form-field appearance="outline">
+                      <mat-label>Bank Name</mat-label>
+                      <mat-select
+
+                      formControlName="payment_ledger_id"
+                       >
+                        @if (l_account.length) {
+                            <mat-option *ngFor="let item of l_account "  [value]="item.id">{{item.name | uppercase}} Bal: {{item.balance | currency:"INR"}}</mat-option>
+                        }
+
+                    </mat-select>
+                    @if (salaryForm.get('payment_ledger_id')?.hasError('required')) {
+                        <mat-error>Bank Name is <strong>required</strong></mat-error>
+                      }
+                    </mat-form-field>
+                </div>
+          </div>
+          <button mat-raised-button color="primary"
+          type="submit"
+          [disabled]="this.salaryForm.status == 'INVALID' "
+        >SAVE</button>
+        </form>
+    </div>
+</div>

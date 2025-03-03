@@ -1,0 +1,196 @@
+<div class="page_wrapper">
+    <div class="heading_with_btn">
+      <div>
+          <h1 class="heading1">Register New <strong>Party</strong></h1>
+      </div>
+
+  </div>
+
+  <form [formGroup]="newKhataForm"   (submit)="submit()">
+    <div class="input_forms2_main">
+        <div class="c_shadow input_forms2">
+            <h2>Personal Information</h2>
+            <mat-form-field appearance="outline">
+              <mat-label>Party Type</mat-label>
+              <mat-select formControlName="khata_type" >
+                <mat-option value="creditor">Sendry Creditor</mat-option>
+                <mat-option value="debtor">Sendry Debitor</mat-option>
+              </mat-select>
+            </mat-form-field>
+            <div>
+                <mat-form-field appearance="outline" >
+                    <mat-label>Fullname</mat-label>
+                    <input matInput
+                      formControlName="name"
+                      maxlength="30"
+                    >
+                    @if (newKhataForm.get('name')?.hasError('required')) {
+                      <mat-error> Name is <strong>required</strong></mat-error>
+                    }
+                  </mat-form-field>
+            </div>
+            <div>
+                <mat-form-field appearance="outline">
+                    <mat-label>Mobile</mat-label>
+                    <input matInput
+                      formControlName="mobile"
+                      maxlength="10"
+                      minlength="10"
+                    >
+                    @if (newKhataForm.get('mobile')?.hasError('required')) {
+                      <mat-error> Mobile is <strong>required</strong></mat-error>
+                    }
+                    @if (newKhataForm.get('mobile')?.hasError('minlength')) {
+                      <mat-error> Minimum 10 <strong>Digits</strong></mat-error>
+                    }
+                    @if (newKhataForm.get('mobile')?.hasError('invalidDigit')) {
+                      <mat-error> Enter Valid <strong>Digits</strong></mat-error>
+                    }
+                  </mat-form-field>
+            </div>
+            <div>
+                <mat-form-field appearance="outline">
+                    <mat-label>Email</mat-label>
+                    <input type="email" matInput
+                      formControlName="email"
+                    >
+                    @if (newKhataForm.get('email')?.hasError('email')) {
+                      <mat-error>Enter Vaild <strong>Email</strong></mat-error>
+                    }
+                  </mat-form-field>
+            </div>
+
+      </div>
+
+      <div class="c_shadow input_forms2">
+        <h2>Business Information</h2>
+        <div>
+          <div>
+            <mat-form-field appearance="outline">
+              <mat-label>Choose State</mat-label>
+              <mat-select
+              formControlName="state_id"
+
+               >
+               <mat-option *ngFor="let item of states" value="{{item.id}}">{{item.state_name}}</mat-option>
+
+
+            </mat-select>
+            @if (newKhataForm.get('state_id')?.hasError('required')) {
+                <mat-error>State is <strong>required</strong></mat-error>
+              }
+            </mat-form-field>
+          </div>
+        </div>
+        <div>
+            <mat-form-field appearance="outline">
+                <mat-label>Company Name</mat-label>
+                <input matInput
+                formControlName="company_name"
+                maxlength="30"
+                >
+                @if (newKhataForm.get('company_name')?.hasError('maxlength')) {
+                  <mat-error>Maximum 30 <strong>Characters</strong></mat-error>
+                }
+                @if (newKhataForm.get('company_name')?.hasError('minlength')) {
+                  <mat-error>Minimum 5 <strong>Characters</strong></mat-error>
+                }
+                @if (newKhataForm.get('company_name')?.hasError('alphanumeric')) {
+                  <mat-error>Only Vaild <strong>Alphanumeric</strong></mat-error>
+                }
+              </mat-form-field>
+              <!-- {{newKhataForm.get('company_name')?.errors | json}} -->
+        </div>
+        <div>
+            <mat-form-field appearance="outline">
+                <mat-label>GST</mat-label>
+                <input matInput
+                  formControlName="gst"
+                  maxlength="15"
+
+                >
+                @if (newKhataForm.get('gst')?.hasError('alphanumeric')) {
+                  <mat-error>Only Vaild <strong>Alphanumeric without space</strong></mat-error>
+                }
+                 @if (newKhataForm.get('gst')?.hasError('minlength')) {
+                  <mat-error>Minimum 15 <strong>Characters</strong></mat-error>
+                }
+                @if (newKhataForm.get('gst')?.hasError('maxlength')) {
+                  <mat-error>Maximum 15 <strong>Characters</strong></mat-error>
+                }
+              </mat-form-field>
+        </div>
+        <div>
+            <mat-form-field appearance="outline">
+                <mat-label>Pan</mat-label>
+                <input  matInput
+                formControlName="pan"
+                maxlength="10"
+                appUppercase
+                >
+                @if (newKhataForm.get('pan')?.hasError('required')) {
+                  <mat-error>Only Vaild <strong>Alphanumeric</strong></mat-error>
+                }
+                 @if (newKhataForm.get('pan')?.hasError('minlength')) {
+                  <mat-error>Minimum 10 <strong>Characters</strong></mat-error>
+                }@if (newKhataForm.get('pan')?.hasError('invalidPan')) {
+                  <mat-error>Enter valid and uppercase <strong>Pan number</strong></mat-error>
+                }
+              </mat-form-field>
+        </div>
+        <div>
+            <mat-form-field appearance="outline">
+                <mat-label>Tan</mat-label>
+                <input  matInput
+                  formControlName="tan"
+                  maxlength="10"
+                >
+
+                @if (newKhataForm.get('tan')?.hasError('required')) {
+                  <mat-error>Only Vaild <strong>Alphanumeric</strong></mat-error>
+                }
+                 @if (newKhataForm.get('tan')?.hasError('minlength')) {
+                  <mat-error>Minimum 10 <strong>Characters</strong></mat-error>
+                }@if (newKhataForm.get('tan')?.hasError('alphanumeric')) {
+                  <mat-error>Only Vaild <strong>Alphanumeric without space</strong></mat-error>
+                }
+              </mat-form-field>
+        </div>
+
+      </div>
+      <div class="c_shadow input_forms2">
+        <h2>Address</h2>
+
+        <div>
+            <mat-form-field appearance="outline">
+                <mat-label>Address</mat-label>
+                <textarea
+                  matInput
+                  formControlName="address"
+                  maxlength="70"
+
+                  ></textarea>
+                @if (newKhataForm.get('address')?.hasError('required')) {
+                  <mat-error>Address is <strong>required</strong></mat-error>
+                }@if (newKhataForm.get('address')?.hasError('maxlength')) {
+                  <mat-error>Maximum 70 <strong>Characters</strong></mat-error>
+                }
+              </mat-form-field>
+        </div>
+      </div>
+    </div>
+    <div *ngIf="api_validation.length" class="error">
+      <p *ngFor="let item of api_validation"> {{item}}</p>
+    </div>
+    <div class="button_area">
+        <button mat-raised-button color="primary"
+        type="submit"
+        [disabled]="this.newKhataForm.status == 'INVALID'"
+      >SAVE</button>
+    </div>
+
+    <!-- {{this.newKhataForm.value | json}} -->
+
+  </form>
+
+</div>

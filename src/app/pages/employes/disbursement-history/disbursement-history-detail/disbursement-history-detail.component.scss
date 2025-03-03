@@ -1,0 +1,32 @@
+td.breck_up> div {
+    display: flex;
+    flex-flow: column;
+}
+
+td.breck_up> div>div {
+    font-size: 13px;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+
+td.breck_up> div>div>.first {
+    width: 148px;
+    border-right: 1px solid #4CAF50;
+    position: relative;
+    color: #3c893f;
+    font-size: 13px;
+    font-weight: 500;
+}
+
+td.breck_up> div>div>.first:after {
+    position: absolute;
+    content: "";
+    font-weight: bold;
+    right: 0;
+    width: 10px;
+    height: 1px;
+    background: rebeccapurple;
+    top: calc(50% - 1px);
+}

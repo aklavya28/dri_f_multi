@@ -1,0 +1,323 @@
+
+<div class="page_wrapper">
+      <h1>Create new <strong>Employee</strong></h1>
+    <form [formGroup]="employeeForm" (submit)="submit()">
+        <div class="form_area">
+          <div class="personal details">
+            <h2>Personal <strong>Details</strong></h2>
+            <div>
+              <div>
+                <mat-form-field appearance="outline">
+                    <mat-label>Full Name</mat-label>
+                    <input type="text" matInput
+                    formControlName="fullname"
+                    maxlength="30"
+                    [errorStateMatcher]="matcher"
+                           placeholder="Ex. Sunil Bhardwaj">
+                    <!-- <mat-hint>Errors appear instantly!</mat-hint> -->
+
+                    @if (employeeForm.get('fullname')?.hasError('required')) {
+                      <mat-error> Name is <strong>required</strong></mat-error>
+                    }
+                  </mat-form-field>
+            </div>
+            <div>
+                <mat-form-field appearance="outline">
+                    <mat-label>Father Name</mat-label>
+                    <input type="text" matInput
+                    formControlName="fathername"
+                    maxlength="30"
+                    [errorStateMatcher]="matcher"
+                           placeholder="Ex. Sunil Bhardwaj">
+                    <!-- <mat-hint>Errors appear instantly!</mat-hint> -->
+
+                    @if (employeeForm.get('fathername')?.hasError('required')) {
+                      <mat-error>Father Name is <strong>required</strong></mat-error>
+                    }
+                  </mat-form-field>
+            </div>
+            <div >
+                <mat-form-field appearance="outline">
+                  <mat-label>Mobile Number</mat-label>
+                  <input matInput
+                  formControlName="mobile"
+                  [errorStateMatcher]="matcher"
+                  maxlength="10"
+                  >
+
+                  @if(employeeForm.get('mobile')?.hasError('required')) {
+                    <mat-error>Mobile number is <strong>required</strong></mat-error>
+                  }
+                  @if(employeeForm.get('mobile')?.hasError('pattern')) {
+                      <mat-error>Only valid <strong>Characters</strong></mat-error>
+                    }
+                    @if(employeeForm.get('mobile')?.hasError('maxlength')) {
+                      <mat-error>Only 10 <strong>digits</strong></mat-error>
+                    }
+                    @if(employeeForm.get('mobile')?.hasError('minlength')) {
+                      <mat-error>Only 10 <strong>digits</strong></mat-error>
+                    }
+                  </mat-form-field>
+
+            </div>
+            <div>
+                <mat-form-field appearance="outline">
+                    <mat-label>Email</mat-label>
+                    <input type="email" matInput formControlName="email" placeholder="Ex. pat@example.com">
+
+                    @if (employeeForm.get('email')?.errors) {
+                      <mat-error>Please enter a valid <strong>email address</strong></mat-error>
+                    }
+                    @if (employeeForm.hasError('required')) {
+                      <mat-error>Email is <strong>required</strong></mat-error>
+                    }
+                  </mat-form-field>
+
+            </div>
+            <div>
+                <mat-form-field appearance="outline">
+                  <mat-label>Date of Birth</mat-label>
+                  <input matInput
+                  [max]="getToday()"
+                  formControlName="dob"
+                  [matDatepicker]="picker">
+                  <mat-hint>MM/DD/YYYY</mat-hint>
+                  <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+                  <mat-datepicker #picker></mat-datepicker>
+                  @if(employeeForm.get('dob')?.hasError('required')) {
+                    <mat-error> DOB is <strong>required</strong></mat-error>
+                  }@if(employeeForm.get('dob')?.hasError('dateGreaterThanToday')) {
+                    <mat-error> DOB cannot be greater than <strong>today</strong></mat-error>
+                  }
+                </mat-form-field>
+
+              </div>
+
+
+              <div>
+                <mat-form-field appearance="outline">
+                  <mat-label>Aadhaar Number</mat-label>
+                  <input matInput
+                    formControlName="aadhaar"
+                    maxlength="12"
+                  >
+                  @if(employeeForm.get('aadhaar')?.hasError('required')) {
+                    <mat-error>Aadhaar is <strong>required</strong></mat-error>
+                  }
+                  @if(employeeForm.get('aadhaar')?.hasError('maxlength')) {
+                    <mat-error>Maximum length is <strong>12</strong></mat-error>
+                  }
+                  @if(employeeForm.get('aadhaar')?.hasError('minlength')) {
+                    <mat-error>Minimum length is <strong>40</strong></mat-error>
+                  }
+                  @if(employeeForm.get('aadhaar')?.hasError('pattern')) {
+                    <mat-error>Only valid <strong>Digits</strong></mat-error>
+                  }
+                </mat-form-field>
+
+              </div>
+              <div>
+                <mat-form-field appearance="outline">
+                  <mat-label>Pan Number</mat-label>
+                  <input matInput
+                    formControlName="pan"
+                    maxlength="10"
+
+                    (input)="forceUppercaseConditionally('pan', $event);"
+                  >
+                  @if(employeeForm.get('pan')?.hasError('required')) {
+                    <mat-error>Pan is <strong>required</strong></mat-error>
+                  }
+                  @if(employeeForm.get('pan')?.hasError('maxlength')) {
+                    <mat-error>Maximum length is <strong>10</strong></mat-error>
+                  }
+                  @if(employeeForm.get('pan')?.hasError('minlength')) {
+                    <mat-error>Minimum length is <strong>10</strong></mat-error>
+                  }
+                  @if(employeeForm.get('pan')?.hasError('invalidPan')) {
+                      <mat-error>Pan is not <strong>valid</strong></mat-error>
+                    }
+
+                </mat-form-field>
+
+              </div>
+              <div class="textarea">
+                <mat-form-field appearance="outline">
+                  <mat-label>Full Address</mat-label>
+                  <textarea matInput
+                  formControlName="full_address"
+                  maxlength="240"
+                  ></textarea>
+
+                  @if(employeeForm.get('full_address')?.hasError('required')) {
+                    <mat-error>Address is <strong>required</strong></mat-error>
+                  }
+                  @if(employeeForm.get('full_address')?.hasError('maxlength')) {
+                      <mat-error>Maximum length is <strong>240</strong></mat-error>
+                    }@if(employeeForm.get('full_address')?.hasError('minlength')) {
+                      <mat-error>Minimum length is <strong>40</strong></mat-error>
+                    }
+
+                </mat-form-field>
+              </div>
+            </div>
+          </div>
+          <div class="job details">
+            <h2>Job <strong>Details</strong></h2>
+            <div>
+              <div>
+                <mat-form-field appearance="outline">
+                  <mat-label>Joining Date</mat-label>
+                  <input matInput
+                  [max]="getToday()"
+                  formControlName="joining_date"
+                  [matDatepicker]="picker2">
+                  <mat-hint>MM/DD/YYYY</mat-hint>
+                  <mat-datepicker-toggle matIconSuffix [for]="picker2"></mat-datepicker-toggle>
+                  <mat-datepicker #picker2></mat-datepicker>
+                  @if(employeeForm.get('joining_date')?.hasError('required')) {
+                    <mat-error> Joining Date is <strong>required</strong></mat-error>
+                  }@if(employeeForm.get('joining_date')?.hasError('dateGreaterThanToday')) {
+                    <mat-error> Date cannot be greater than <strong>today</strong></mat-error>
+                  }
+                </mat-form-field>
+
+              </div>
+              <div>
+                <mat-form-field appearance="outline">
+                  <mat-label>Designation</mat-label>
+                  <input matInput
+                    formControlName="designation"
+                    maxlength="30"
+                  >
+                  @if(employeeForm.get('designation')?.hasError('required')) {
+                    <mat-error>Aadhaar is <strong>required</strong></mat-error>
+                  }
+                  @if(employeeForm.get('designation')?.hasError('maxlength')) {
+                    <mat-error>Maximum length is <strong>30</strong></mat-error>
+                  }
+                </mat-form-field>
+              </div>
+              <div>
+                <mat-form-field appearance="outline">
+                  <mat-label>Job Ttype</mat-label>
+                  <mat-select disableRipple
+                    formControlName="job_type"
+                  >
+                    <mat-option value="fulltime">Full-Time</mat-option>
+                    <mat-option value="parttime">Part-Time</mat-option>
+                  </mat-select>
+                  @if(employeeForm.get('job_type')?.hasError('required')) {
+                    <mat-error>Type is <strong>required</strong></mat-error>
+                  }
+                </mat-form-field>
+              </div>
+            </div>
+          </div>
+
+          <div class="nominee details">
+            <h2>Nominee <strong>Details</strong></h2>
+            <div>
+              <div>
+                <mat-form-field appearance="outline">
+                  <mat-label>Nominee Name</mat-label>
+                  <input matInput
+                    formControlName="nominee_name"
+                    maxlength="50"
+                  >
+                  @if(employeeForm.get('nominee_name')?.hasError('required')) {
+                    <mat-error>Nominee Name is <strong>required</strong></mat-error>
+                  }
+                  @if(employeeForm.get('nominee_name')?.hasError('maxlength')) {
+                    <mat-error>Maximum length is <strong>50</strong></mat-error>
+                  }
+                </mat-form-field>
+
+              </div>
+                <div>
+                  <mat-form-field appearance="outline">
+                    <mat-label>Relation with nominee</mat-label>
+                    <mat-select disableRipple
+                      formControlName="relation_with_nominee"
+                    >
+                    @for (item of nominee_relation; track $index) {
+
+                      <mat-option [value]="item">{{item | uppercase }}</mat-option>
+                    }
+                    </mat-select>
+                    @if(employeeForm.get('relation_with_nominee')?.hasError('required')) {
+                      <mat-error>Relation is <strong>required</strong></mat-error>
+                    }
+                  </mat-form-field>
+
+
+
+                </div>
+
+
+                <div >
+                  <mat-form-field appearance="outline">
+                    <mat-label>Nominee Mobile Number</mat-label>
+                    <input matInput
+                    formControlName="nominee_mobile"
+                    [errorStateMatcher]="matcher"
+                    maxlength="10"
+                    >
+                    @if(employeeForm.get('nominee_mobile')?.hasError('pattern')) {
+                        <mat-error>Only valid <strong>Characters</strong></mat-error>
+                      }
+                      @if(employeeForm.get('nominee_mobile')?.hasError('maxlength')) {
+                        <mat-error>Only 10 <strong>digits</strong></mat-error>
+                      }
+                      @if(employeeForm.get('nominee_mobile')?.hasError('minlength')) {
+                        <mat-error>Only 10 <strong>digits</strong></mat-error>
+                      }
+                    </mat-form-field>
+
+              </div>
+              <div class="textarea">
+                <mat-form-field appearance="outline">
+                  <mat-label>Nominee Address</mat-label>
+                  <textarea matInput
+                  formControlName="nominee_address"
+                  maxlength="240"
+                  ></textarea>
+
+                  @if(employeeForm.get('nominee_address')?.hasError('required')) {
+                    <mat-error>Address is <strong>required</strong></mat-error>
+                  }
+                  @if(employeeForm.get('nominee_address')?.hasError('maxlength')) {
+                      <mat-error>Maximum length is <strong>240</strong></mat-error>
+                    }@if(employeeForm.get('full_address')?.hasError('minlength')) {
+                      <mat-error>Minimum length is <strong>40</strong></mat-error>
+                    }
+
+                </mat-form-field>
+              </div>
+            </div>
+          </div>
+
+        </div>
+        @if (server_erros.length) {
+          <div class="error" >
+            @for (item of server_erros; track $index) {
+              <p>{{item}}</p>
+            }
+          </div>
+
+          <br>
+        }
+
+          <!-- <button mat-raised-button color="primary"
+            type="submit"
+            [disabled]="this.employeeForm.status == 'INVALID' "
+          >Save</button> -->
+
+          <button mat-raised-button color="primary"
+            type="submit"
+
+          >Save</button>
+
+    </form>
+    <!-- {{employeeForm.value | json}} -->
+</div>

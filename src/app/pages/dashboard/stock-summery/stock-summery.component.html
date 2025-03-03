@@ -1,0 +1,109 @@
+<div class="page_wrapper">
+    <div class="heading_with_btn">
+        <div>
+            <h1 class="heading1"> Stock <strong>Summery</strong></h1>
+        </div>
+        <!-- <div>
+            <a [routerLink]="['/company/new-bank']" mat-flat-button color="primary">New Bank</a>
+            <button mat-flat-button color="primary" >New Bank</button>
+        </div> -->
+    </div>
+    <div class="stock_counter">
+        @for (stock of stock_data; track $index) {
+                <div class={{stock.css_class}}>
+                    <h2>{{stock.type | uppercase}}</h2>
+                    <p>{{stock.amount | currency:"INR"}}</p>
+                </div>
+        }
+
+    </div>
+    <div *ngIf="is_sppiner">
+        <div style="position: relative; height: 400px;"> <ngx-spinner bdColor = "rgba(75, 221, 50, 0.8)" color = "#fff" [fullScreen]="false" class="spinner_custom" type="square-jelly-box"></ngx-spinner>
+        </div>
+      </div>
+    <div *ngIf="!is_sppiner" class="inner_page_table table-responsive">
+
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Product</th>
+                    <th>Date</th>
+                    <th>Type</th>
+                    <th>No of Units</th>
+                    <th>Amount</th>
+                    <th>Margin</th>
+                </tr>
+            </thead>
+            <tbody>
+
+                @if (data.length) {
+                    @for ( item of data | paginate: { itemsPerPage: itemsPerPage, currentPage: currentPage, totalItems:totalItems }; track $index)  {
+                        <tr>
+                            <td> {{(itemsPerPage * (currentPage - 1)) + $index+1}}</td>
+                            <td >
+                                <p><strong>{{item.name }}</strong></p>
+
+                            </td>
+                            <td >
+                                    <p class="price">{{item.transaction_date | date }}</p>
+                            </td>
+                            <td >
+                                @if ((item.entry_type | uppercase) ===  "SALE") {
+                                    <span class="badge bg-success">{{item.entry_type | uppercase}}</span>
+                                }
+                                @if ((item.entry_type | uppercase) ===  "PURCHASE RETURN") {
+                                    <span class="badge bg-danger">{{item.entry_type | uppercase}}</span>
+                                }
+                                @if ((item.entry_type | uppercase) ===  "SALE RETURN") {
+                                    <span class="badge bg-info">{{item.entry_type | uppercase}}</span>
+                                }
+                                @if ((item.entry_type | uppercase) ===  "PURCHASE") {
+                                    <span class="badge bg-primary">{{item.entry_type | uppercase}}</span>
+                                }
+
+
+                            </td>
+                            <td >
+                                <p><strong>{{item.sold_count }}</strong> {{item.unit }}</p>
+                            </td>
+                            <td>
+                                @if ((item.entry_type | uppercase) ===  "PURCHASE RETURN") {
+                                    <p><strong>{{item.sold_count }}</strong> X {{item.purchase_unit_price | currency:"INR" }}</p>
+                                    <p class="price">{{(item.sold_count * item.purchase_unit_price) | currency:"INR" }}</p>
+                                }
+                                @if ((item.entry_type | uppercase) ===  "SALE RETURN") {
+                                    <p><strong>{{item.sold_count }}</strong> X {{item.sale_unit_price | currency:"INR" }}</p>
+                                    <p class="price">{{(item.sold_count * item.sale_unit_price) | currency:"INR" }}</p>
+                                }
+                                @if ((item.entry_type | uppercase) ===  "PURCHASE") {
+                                    <p><strong>{{item.sold_count }}</strong> X {{item.purchase_unit_price | currency:"INR" }}</p>
+                                    <p class="price">{{(item.sold_count * item.purchase_unit_price) | currency:"INR" }}</p>
+                                }
+                                @if ((item.entry_type | uppercase) ===  "SALE") {
+                                    <p><strong>{{item.sold_count }}</strong> X {{item.sale_unit_price | currency:"INR" }}</p>
+                                    <p class="price">{{(item.sold_count * item.sale_unit_price) | currency:"INR" }}</p>
+                                }
+                            </td>
+                            <td>
+                                @if ((item.entry_type | uppercase) ===  "SALE") {
+
+                                    <p> {{item.item_profit | currency:"INR" }}</p>
+
+                                }
+                            </td>
+                        </tr>
+                    }
+                }
+              </tbody>
+              <tfoot  *ngIf="data.length && this.pages > 1 ">
+                <tr>
+                    <!-- <td colspan="8"><pagination-controls (pageChange)="currentPage = $event"></pagination-controls></td> -->
+                    <td colspan="8">
+                        <pagination-controls (pageChange)="pageChange($event)"></pagination-controls>
+                    </td>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+</div>

@@ -1,0 +1,68 @@
+@import url('https://fonts.googleapis.com/css2?family=Aclonica&display=swap');
+.example-container {
+
+    min-height: 100%;
+    min-width: 100%;
+  }
+
+  .example-sidenav-content {
+    // display: flex;
+    // height: 100%;
+    // align-items: center;
+    // justify-content: center;
+    background-color: #f2f2f2;
+    border: 1px solid transparent;
+    margin-bottom: 40px;
+  }
+
+  .example-sidenav {
+   background-color: #444;
+  }
+  .inner {
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: space-between;
+    padding: 10px;
+}
+.brand {
+    font-family: "Aclonica", sans-serif;
+    font-weight: 600;
+    font-size: 27px;
+    color: #03A9F4;
+  }
+  .nav_ctrl {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.nav_ctrl>div:last-child {
+    background: #444;
+    color: #fff;
+}
+
+.nav_ctrl>div:last-child svg {fill: white;}
+
+.user_info {
+    /*! background: rebeccapurple; */
+    display: flex;
+    flex-flow: column;
+    padding: 15px;
+    font-size: 15px;
+  }
+  .user_info>div {
+    display: flex;
+    gap: 10px;
+    color: #fff;
+  }
+  .navbar {
+    position: relative; /* Default position */
+    transition: all 0.3s ease; /* Smooth transition */
+    z-index: 1000;
+  }
+
+  .navbar.fixed {
+    position: fixed;
+    top: 0;
+
+  }

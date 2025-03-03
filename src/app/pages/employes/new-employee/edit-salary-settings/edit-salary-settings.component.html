@@ -1,0 +1,181 @@
+<h1>{{name}} <strong>Wages</strong></h1>
+
+
+<div class="setting_container">
+  <div class="form_ara">
+    <form [formGroup]="salarySettingForm" (submit)="submit()">
+        <div formArrayName="item" *ngFor="let o of allowancef.controls; let i = index">
+
+            <div [formGroupName]="i" class="wages_dynamic">
+                <mat-form-field>
+                    <mat-label>Allowance/Deduction Type</mat-label>
+                    <mat-select disableRipple
+                      formControlName="allowance_id"
+                    >
+                    @for (item of allowance; track $index) {
+                      <mat-option [value]="item.id+','+item.type+','+item.name ">{{item.name }}</mat-option>
+                    }
+                    </mat-select>
+                    @if(salarySettingForm.get('item')?.get(i.toString())?.get('allowance_id')?.hasError('required')) {
+                      <mat-error>Allowance is <strong>required</strong></mat-error>
+                    }
+                  </mat-form-field>
+                  <mat-form-field class="example-full-width">
+                    <mat-label>Amount</mat-label>
+                    <input type="number"
+                    min="1"
+                    max="2000000"
+                     matInput
+                        formControlName="amount"
+                    >
+                    @if(salarySettingForm.get('item')?.get(i.toString())?.get('amount')?.hasError('required')) {
+                        <mat-error> Amout is <strong>required</strong></mat-error>
+                      }@if(salarySettingForm.get('item')?.get(i.toString())?.get('amount')?.hasError('min')) {
+                        <mat-error> Minimum Amout morethen <strong>1</strong></mat-error>
+                      }
+                    @if(salarySettingForm.get('item')?.get(i.toString())?.get('amount')?.hasError('max')) {
+                        <mat-error> Maximum Amout lessthen <strong>20,00,000</strong></mat-error>
+                      }
+                  </mat-form-field>
+                  @if (i !=0) {
+
+                    <div>
+                        <button mat-fab color="warn" (click)="removeWages(i)">
+                            <mat-icon>delete</mat-icon>
+                        </button>
+                    </div>
+                }
+            </div>
+        </div>
+        <button mat-flat-button color="warn"
+        (click)="addNewWages()"
+              [disabled]="salarySettingForm.get('item')?.status == 'INVALID' "
+          >Add New </button>
+        <table class="table">
+          <tr>
+            <td>Allowance</td>
+            <td>{{allowance_amount | currency:"INR"}}</td>
+          </tr>
+          <tr>
+            <td>Deduction </td>
+            <td>{{deduction_amount | currency:"INR"}}</td>
+          </tr>
+          <tr>
+            <td>Net Salary</td>
+               <!-- a {{allowance_amount}} <br>
+               d {{deduction_amount}}<br>
+               e_pf {{employer_fp}}<br>
+               advance {{advence_other}}<br>
+
+ -->
+
+
+            <td>{{(allowance_amount - deduction_amount ) | currency:"INR"}}</td>
+          </tr>
+          <tr>
+            <td>Gross Salary</td>
+            <td>{{(allowance_amount + this.employer_fp) | currency:"INR"}}</td>
+          </tr>
+        </table>
+
+          @if (wages_validation.length) {
+            <div class="error mb-4">
+                <p *ngFor="let err of wages_validation"[innerHTML]="err"></p>
+            </div>
+          }
+          <button mat-raised-button color="primary"
+          type="submit"
+          [disabled]="this.salarySettingForm.status == 'INVALID' "
+        >Update</button>
+    </form>
+</div>
+<div class="old_salary">
+  <mat-accordion  multi="true">
+    <mat-expansion-panel [expanded]="true">
+    <mat-expansion-panel-header>
+        <mat-panel-title>
+        Old Selaray Settings
+        </mat-panel-title>
+    </mat-expansion-panel-header>
+    <div>
+
+    @if(profile ){
+      <ng-container *ngIf="profile.salary_settings != null">
+        <div class="personal_info" *ngIf="profile.salary_settings.item_data">
+            <div *ngFor="let item of profile.salary_settings.item_data">
+                <div>{{item.allowance_id.split(',')[2]}}</div>
+                <div>{{item.amount | currency:"INR"}}</div>
+            </div>
+        </div>
+        <table class="profile table">
+            <tr>
+                <td>Allwance</td>
+                <td>{{profile.salary_settings.allwance | currency:"INR"}}</td>
+            </tr>
+            <tr>
+                <td>Deduction</td>
+                <td>{{ profile.salary_settings.deduction | currency:"INR"}}</td>
+            </tr>
+            <tr *ngIf="installment_amt > 0">
+                <td>Current Installment</td>
+                <td>{{  installment_amt | currency:"INR"}}</td>
+            </tr>
+            <tr>
+                <td>Net Salary</td>
+                <td>{{ (profile.salary_settings.net_salary - installment_amt) | currency:"INR"}}</td>
+            </tr>
+            <tr>
+                <td>Gross Salary</td>
+                <td>{{profile.salary_settings.gross_salary | currency:"INR"}}</td>
+            </tr>
+            <tr *ngIf="pending_amt_sum > 0">
+                <td>Advance Pending </td>
+                <td>{{pending_amt_sum | currency:"INR"}}</td>
+            </tr>
+
+        </table>
+      </ng-container>
+      } @else{
+         <p>no data</p>
+      }
+    </div>
+    </mat-expansion-panel>
+    <mat-expansion-panel *ngIf="payouts.length" [expanded]="false">
+      <mat-expansion-panel-header>
+          <mat-panel-title>
+            Advance Salary Payouts
+          </mat-panel-title>
+      </mat-expansion-panel-header>
+      <div class="payout_tbl">
+
+      @if(payouts.length ){
+
+          <!-- <div class="personal_info" *ngIf="profile.salary_settings.item_data">
+              <div *ngFor="let item of profile.salary_settings.item_data">
+                  <div>{{item.allowance_id.split(',')[2]}}</div>
+                  <div>{{item.amount | currency:"INR"}}</div>
+              </div>
+          </div> -->
+          <table class="profile table">
+            <tr>
+              <th>Installments </th>
+              <th>Paid</th>
+          </tr>
+            @for (item of payouts; track $index) {
+              <tr>
+                <td>{{item.amount | currency:"INR"}}</td>
+                <td>{{item.is_paid ? "Yes" : "No"}} </td>
+            </tr>
+            }
+          </table>
+        } @else{
+           <p>no data</p>
+        }
+      </div>
+      </mat-expansion-panel>
+
+</mat-accordion>
+</div>
+</div>
+
+

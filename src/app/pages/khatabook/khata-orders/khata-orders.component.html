@@ -1,0 +1,139 @@
+<div class="page_wrapper" >
+
+
+    <div class="c_shadow heading_with_btn">
+        <div>
+            <h1 class="heading1">Party Orders of <strong style="text-transform: capitalize;">{{name}}</strong></h1>
+        </div>
+        <div>
+            <button mat-icon-button  class='nav_dropdown' [matMenuTriggerFor]="menu" aria-label="Example icon-button with a menu">
+              <mat-icon>more_vert</mat-icon>
+            </button>
+            <mat-menu #menu="matMenu">
+
+                <button mat-menu-item [routerLink]="['/khatabook/khatabook-accounts',1]" >
+                    <mat-icon>supervised_user_circle</mat-icon>
+                    <span>Party Accounts</span>
+                  </button>
+                  <button mat-menu-item [routerLink]="['/khatabook/view-trans',slug,name, 1]" >
+                    <mat-icon>account_balance_wallet</mat-icon>
+                    <span>Party Transactions</span>
+                  </button>
+                  <button mat-menu-item [routerLink]="['/khatabook/khata-profile',slug,name, 1]" >
+                    <mat-icon>short_text</mat-icon>
+                    <span>Entries</span>
+                  </button>
+              <button mat-menu-item [routerLink]="['/khatabook/add-payment',slug, name]" >
+                <mat-icon>payment</mat-icon>
+                <span>Pay / Receive Money</span>
+              </button>
+
+            </mat-menu>
+          </div>
+    </div>
+    <div class="search_form">
+        <div>
+            <form [formGroup]="seachOrdersForm" (submit)="submit()">
+
+                <div>
+                    <mat-form-field appearance="outline">
+                        <mat-label>Search by</mat-label>
+                        <mat-select formControlName="search_by" (selectionChange)="search_by_change($event.value)">
+                            <mat-option value="invoice_no">Invoice No</mat-option>
+                            <mat-option value="order_date">Order Date</mat-option>
+                            <mat-option value="order_type">Order Type</mat-option>
+                        </mat-select>
+                        @if(seachOrdersForm.get('search_by')?.hasError('required')) {
+                            <mat-error>Field is <strong>required</strong></mat-error>
+                          }
+                      </mat-form-field>
+                </div>
+                <div>
+                    <mat-form-field appearance="outline" *ngIf="seachOrdersForm.get('search_by')?.value === 'order_type'">
+                        <mat-label>Search by</mat-label>
+                        <mat-select formControlName="order_type" >
+                            <mat-option value="purchase">Purchase</mat-option>
+                            <mat-option value="purchase_return">Purchase Return</mat-option>
+                            <mat-option value="sale">Sale</mat-option>
+                            <mat-option value="sale_return">Sale Return</mat-option>
+                            <mat-option value="not_approved">Not Approved</mat-option>
+                        </mat-select>
+                        @if(seachOrdersForm.get('order_type')?.hasError('required')) {
+                            <mat-error>Field is <strong>required</strong></mat-error>
+                          }
+                      </mat-form-field>
+                </div>
+                <div *ngIf="show_dates">
+                    <mat-form-field appearance="outline">
+                        <mat-label>Enter a date range</mat-label>
+                        <mat-date-range-input  [rangePicker]="picker">
+                          <input matStartDate formControlName="start"  placeholder="Start date">
+                          <input matEndDate formControlName="end"   placeholder="End date">
+                        </mat-date-range-input>
+                        <mat-hint>MM/DD/YYYY – MM/DD/YYYY</mat-hint>
+                        <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+                        <mat-date-range-picker #picker></mat-date-range-picker>
+
+                        @if (seachOrdersForm.get("start")?.hasError('matStartDateInvalid')) {
+                          <mat-error>Invalid start date</mat-error>
+                        }
+                        @if (seachOrdersForm.get("end")?.hasError('matEndDateInvalid')) {
+                          <mat-error>Invalid end date</mat-error>
+                        }
+                      </mat-form-field>
+                </div>
+
+                <div *ngIf="seachOrdersForm.get('search_by')?.value === 'invoice_no'">
+                    <mat-form-field appearance="outline">
+                        <mat-label>Invoice No</mat-label>
+                        <input matInput formControlName="seach_value" (change)="seach_value_ch($event)" type="text">
+                        @if (value) {
+                          <button matSuffix mat-icon-button aria-label="Clear"  type="button" (click)="clear_fval()">
+                            <mat-icon>close</mat-icon>
+                          </button>
+                        }
+                        @if(seachOrdersForm.get('seach_value')?.hasError('required')) {
+                            <mat-error>Field is <strong>required</strong></mat-error>
+                          }
+                          @if(seachOrdersForm.get('seach_value')?.hasError('maxlength')) {
+                            <mat-error>Maximum <strong>30</strong></mat-error>
+                          }
+                      </mat-form-field>
+                </div>
+
+
+
+                <button mat-fab color="primary"
+                    type="submit"
+                    [disabled]="seachOrdersForm.status == 'INVALID' "
+                >
+                <mat-icon >search</mat-icon>
+                </button>
+            </form>
+
+        </div>
+    </div>
+    <div *ngIf="is_sppiner">
+        <div style="position: relative; height: 400px;"> <ngx-spinner bdColor = "rgba(75, 221, 50, 0.8)" color = "#fff" [fullScreen]="false" class="spinner_custom" type="square-jelly-box"></ngx-spinner>
+        </div>
+    </div>
+
+    <div *ngIf="!is_sppiner" class="inner_page_table table-responsive">
+        <div class="no_data2" *ngIf="!data.length">
+            <p>No Data</p>
+        </div>
+
+        <app-order-grid
+        [data]="data"
+        [currentPage]="currentPage"
+        [itemsPerPage]="itemsPerPage"
+        [totalItems]="totalItems"
+        (pageChange)="pageChange($event)"
+        (editOrder)="editOrder($event.slug, $event.type)"
+        (approveOrder)="approve_order($event)">
+        </app-order-grid>
+
+
+
+    </div>
+</div>

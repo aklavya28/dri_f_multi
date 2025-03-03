@@ -1,0 +1,112 @@
+<div class="page_wrapper">
+    <div class="c_shadow heading_with_btn mb-5">
+      <div class="back_button_heading">
+        <div class="backbutton">
+            <a mat-fab color="primary" [routerLink]="'/entries/expense-new'">
+            <mat-icon>arrow_back</mat-icon>
+          </a>
+        </div>
+        <h1 class="heading1">
+
+          <strong style="text-transform: capitalize">Services</strong>
+        </h1>
+      </div>
+
+  </div>
+  <div class="body_multy">
+        <div class="inner_page_table table-responsive">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Name</th>
+                        <th>GST</th>
+                        <th>Description</th>
+                        <th>Active</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @for (item of categories; track $index) {
+                        <tr>
+                            <td>{{$index + 1}}</td>
+                            <td>{{item.name | uppercase}}</td>
+                            <td>{{item.gst }} %</td>
+                            <td>{{item.description }} </td>
+                            <td>
+                                <mat-slide-toggle
+                                [ngModel]="item.is_active"
+                                (change)="change_active_exp_cat(item.id, $event )"
+                                >
+
+                                </mat-slide-toggle>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+
+            </table>
+        </div>
+        <div class="c_shadow heading_with_btn mb-5">
+            <form [formGroup]="catForm" (submit)="submit()" class="full_width">
+                <h2>Add <strong>Service</strong> </h2>
+                <div class="mutly_inputs">
+                    <div>
+                        <mat-form-field class="example-full-width" appearance="outline">
+                            <mat-label>Service Name</mat-label>
+                            <input matInput formControlName="name" placeholder="Ex. Electrical Work" >
+                            @if(catForm.get('name')?.hasError('required')) {
+                                <mat-error>Name is <strong>required</strong></mat-error>
+                              }@else if(catForm.get('name')?.hasError('alphanumeric')) {
+                                <mat-error>Enter vaild <strong>alphanumeric</strong></mat-error>
+                              }@else if(catForm.get('name')?.hasError('maxlength')) {
+                                <mat-error>Maximum length <strong>30</strong></mat-error>
+                              }
+                          </mat-form-field>
+
+                    </div>
+                    <div>
+                        <mat-form-field class="example-full-width" appearance="outline">
+                            <mat-label>GST %</mat-label>
+                            <input matInput placeholder="18"
+                                formControlName="gst"
+                                type="number"
+                            >
+                            @if(catForm.get('gst')?.hasError('required')) {
+                                <mat-error>Gst is <strong>required</strong></mat-error>
+                              }@else if(catForm.get('gst')?.hasError('invalidDigit')) {
+                                <mat-error>Invalid <strong>Digit</strong></mat-error>
+                              }@else if(catForm.get('gst')?.hasError('max')) {
+                                <mat-error>Maximum <strong>50%</strong></mat-error>
+                              }
+                          </mat-form-field>
+                    </div>
+                </div>
+                <div class="single">
+                    <mat-form-field class="example-full-width" appearance="outline">
+                        <mat-label>Description</mat-label>
+                        <textarea matInput
+                        formControlName="description"
+
+                            maxlength="100"
+                        ></textarea>
+                      </mat-form-field>
+                </div>
+                <div style="position: relative; top: -10px; margin-bottom: -20px;" class="input_forms2_main" *ngIf="balance_check_err.length">
+                    <div class="error" *ngFor="let item of balance_check_err">
+                      <p>{{item}}</p>
+                    </div>
+                  </div>
+                  <br>
+                <div [ngStyle]="{ 'margin': balance_check_err.length ? '0 0 20px 0' : '-20px 0 20px 0' }" > <button mat-raised-button color="warn"
+                    type="submit"
+                    [disabled]="this.catForm.status == 'INVALID' "
+                  >Save Service</button>
+                </div>
+
+            </form>
+
+        </div>
+  </div>
+
+
+</div>

@@ -1,0 +1,71 @@
+<div class="page_wrapper">
+      <div class="heading_with_btn">
+        <div>
+            <h1 class="heading1">Register New <strong>User</strong></h1>
+        </div>
+
+    </div>
+
+    <form [formGroup]="newUserForm"   (submit)="creatNewUser()">
+        <div class="c_shadow input_forms">
+            <div>
+                <mat-form-field appearance="outline">
+                    <mat-label>First Name</mat-label>
+                    <input type="f_name" matInput
+                    formControlName="f_name"
+                    [errorStateMatcher]="matcher"
+                           placeholder="Ex. kamal">
+                    <!-- <mat-hint>Errors appear instantly!</mat-hint> -->
+
+                    @if (f['f_name'].hasError('required')) {
+                      <mat-error>First Name is <strong>required</strong></mat-error>
+                    }
+                  </mat-form-field>
+            </div>
+            <div>
+                <mat-form-field appearance="outline">
+                    <mat-label>Last Name</mat-label>
+                    <input type="l_name" matInput
+                    formControlName="l_name"
+                    [errorStateMatcher]="matcher"
+                           placeholder="Ex. kamal">
+                    <!-- <mat-hint>Errors appear instantly!</mat-hint> -->
+
+                    @if (f['f_name'].hasError('required')) {
+                      <mat-error>Last Name is <strong>required</strong></mat-error>
+                    }
+                  </mat-form-field>
+            </div>
+            <div>
+                <mat-form-field appearance="outline">
+                    <mat-label>Email</mat-label>
+                    <input type="email" matInput
+
+                    formControlName="email"
+                    [errorStateMatcher]="matcher"
+                           placeholder="Ex. pat@example.com">
+                    <!-- <mat-hint>Errors appear instantly!</mat-hint> -->
+                    @if (f['email'].hasError('email') && !f['email'].hasError('required')) {
+                      <mat-error>Please enter a valid email address</mat-error>
+                    }
+                    @if (f['email'].hasError('required')) {
+                      <mat-error>Email is <strong>required</strong></mat-error>
+                    }
+                  </mat-form-field>
+            </div>
+        </div>
+        <div class="button_area">
+            <button mat-raised-button color="primary"
+            type="submit"
+            [disabled]="this.newUserForm.status == 'INVALID'"
+          >Save</button>
+        </div>
+        @if (api_error) {
+
+            <div class="api_error">
+                <p *ngFor="let err of api_error">{{err}}</p>
+            </div>
+        }
+
+    </form>
+</div>

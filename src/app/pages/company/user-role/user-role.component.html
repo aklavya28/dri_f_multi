@@ -1,0 +1,42 @@
+<p>user-role works!</p>
+<form [formGroup]="userRoleForm"  (submit)="submitForm()">
+        <div>
+            <label > Choose Promoter</label>
+            <ng-multiselect-dropdown
+            class="form-control"
+            [placeholder]="'Choose Promoter'"
+            [settings]="dropdownSettings"
+            [data]="dropdownList"
+            formControlName="user"
+            (onSelect)="onItemSelect($event)"
+            (onSelectAll)="onSelectAll($event)"
+
+
+          >
+          </ng-multiselect-dropdown>
+          @if (f['user'].hasError('required') && f['user'].touched) {
+            <mat-error>User is <strong>required</strong></mat-error>
+          }
+        </div>
+        <div>
+          <mat-form-field>
+            <mat-label>Choose Role</mat-label>
+            <mat-select
+            formControlName="role"
+             >
+              @for (role of roles; track role) {
+                <mat-option [value]="role.id">{{role.name}}</mat-option>
+              }
+            </mat-select>
+            @if (f['role'].hasError('required')) {
+              <mat-error>Role is <strong>required</strong></mat-error>
+            }
+          </mat-form-field>
+        </div>
+        <div class="btn_area">
+          <button mat-raised-button color="primary"
+          type="submit"
+          [disabled]="this.userRoleForm.status == 'INVALID'"
+        >Save</button>
+        </div>
+</form>

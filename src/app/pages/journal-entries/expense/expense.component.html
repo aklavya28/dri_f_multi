@@ -1,0 +1,128 @@
+<div class="page_wrapper">
+    <div class="c_shadow heading_with_btn">
+        <div>
+        <h1 class="heading1">
+            View
+            <strong style="text-transform: capitalize">Expenses</strong>
+        </h1>
+        </div>
+        <div class="action_icon">
+        <a class="btn_green" mat-mini-fab [routerLink]="'/entries/expense-new'"> <mat-icon>add</mat-icon> </a>
+        </div>
+    </div>
+
+    <div class="search_form  mb-3">
+        <div>
+            <form [formGroup]="trialSearchForm" (submit)="submit()">
+
+                <div>
+                    <mat-form-field appearance="outline">
+                        <mat-label>Enter a date range</mat-label>
+                        <mat-date-range-input  [rangePicker]="picker">
+                          <input matStartDate formControlName="start" placeholder="Start date">
+                          <input matEndDate formControlName="end" placeholder="End date">
+                        </mat-date-range-input>
+                        <mat-hint>MM/DD/YYYY – MM/DD/YYYY</mat-hint>
+                        <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+                        <mat-date-range-picker #picker></mat-date-range-picker>
+
+                        @if (trialSearchForm.get("start")?.hasError('matStartDateInvalid')) {
+                          <mat-error>Invalid start date</mat-error>
+                        }
+                        @if (trialSearchForm.get("end")?.hasError('matEndDateInvalid')) {
+                          <mat-error>Invalid end date</mat-error>
+                        }
+                      </mat-form-field>
+                </div>
+
+
+                <button mat-fab color="primary"
+                    type="submit"
+                    [disabled]="trialSearchForm.status == 'INVALID' "
+                >
+                <mat-icon >search</mat-icon>
+                </button>
+            </form>
+
+        </div>
+    </div>
+
+    <h3 *ngIf="data.length" class="heading_h3">Expenses From <span>{{start_date | date}}</span> To <span>{{end_date | date}}</span></h3>
+
+    <div class="inner_page_table table-responsive">
+
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Name</th>
+                <th style="min-width: 100px;">Date</th>
+                <th style="min-width: 200px;">Remarks</th>
+                <th>Amount</th>
+                <th>Is Processed</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+
+            @if (data.length) {
+                @for ( item of data | paginate: { itemsPerPage: itemsPerPage, currentPage: currentPage, totalItems:totalItems }; track $index)  {
+                    <tr>
+                        <td> {{(itemsPerPage * (currentPage - 1)) + $index+1}}</td>
+                        <td >
+                            <p><strong>{{item.name }}</strong></p>
+
+                        </td>
+                        <td >
+                                <p class="price">{{item.transaction_date | date }}</p>
+                        </td>
+                        <td >
+                            {{item.remarks}}
+                        </td>
+                        <td >
+                            {{item.amount | currency:"INR"}}
+                        </td>
+                        <td>
+                            <span ngClass="{{ item.is_processed ? 'badge-success': 'badge-danger' }} " class="badge">{{item.is_processed ? 'Yes': 'No  '}}</span>
+                        </td>
+                        <td>
+                            <div class="action_icon">
+                                <button class="btn_pink" mat-mini-fab matTooltip="Reverse Entry" (click)="reverse_entry(item.slug)" *ngIf="!item.is_reversed && item.is_processed" type="button" >
+                                    <mat-icon>undo</mat-icon>
+                                </button>
+
+                             
+
+
+                            </div>
+                        </td>
+                    </tr>
+                }
+            }@else{
+                <tr *ngIf="!is_sppiner">
+                    <td colspan="8" style="position: relative; height: 400px;" class="no_data">
+                        No Data
+                    </td>
+                </tr>
+            }
+            <tr *ngIf="is_sppiner"  class="no_data">
+                <td style="position: relative; height: 400px;"  colspan="8"> <ngx-spinner [fullScreen]="false" class="spinner_custom" type="ball-scale-multiple"></ngx-spinner>
+                </td>
+            </tr>
+            </tbody>
+            <tfoot  *ngIf="data.length && this.pages > 1 ">
+            <tr>
+                <!-- <td colspan="8"><pagination-controls (pageChange)="currentPage = $event"></pagination-controls></td> -->
+                <td colspan="8">
+                    <pagination-controls (pageChange)="pageChange($event)"></pagination-controls>
+                </td>
+            </tr>
+        </tfoot>
+    </table>
+    </div>
+
+</div>
+
+
+
+

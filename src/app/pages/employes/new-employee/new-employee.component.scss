@@ -1,0 +1,50 @@
+.details {
+    margin-bottom: 10px;
+}
+
+.details >h2 {
+    font-size: 20px;
+    font-weight: normal;
+    letter-spacing: 1px;
+}
+
+.details >div {
+    background: #fff;
+    padding: 15px 15px 0;
+    border-radius: 4px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2784313725);
+    display: flex;
+    gap: 10PX;
+    margin-bottom: 20px;
+    flex-flow: row wrap;
+}
+.details>div>div {
+    min-width: 300px;
+}
+
+.details>div>div mat-form-field {
+    width: 100%;
+}
+
+.details>div>div.textarea {
+    display: flex;
+    flex-basis: 100%;
+    max-width: 610px;
+}
+.mat-mdc-form-field-error-wrapper{position: relative !important;}
+.profile.table th {
+    padding: 10px;
+    background: #b63b4d;
+    color: #fff;
+    font-weight: normal;
+    text-transform: uppercase;
+}
+
+.profile.table tr th {
+    border-right: 1px solid #ffffff80;
+}
+
+.profile.table tr th:last-child {
+    border: 0;
+}
+.payout_tbl {max-height: 200px;overflow-y: auto;}

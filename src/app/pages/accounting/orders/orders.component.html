@@ -1,0 +1,268 @@
+<div class="page_wrapper">
+    <div class="heading_with_btn">
+        <div>
+            <h1 class="heading1"> All <strong>Orders</strong></h1>
+        </div>
+    </div>
+    <div class="search_form">
+        <div>
+            <form [formGroup]="seachOrdersForm" (submit)="submit()">
+
+                <div>
+                    <mat-form-field appearance="outline">
+                        <mat-label>Search by</mat-label>
+                        <mat-select formControlName="search_by" (selectionChange)="search_by_change($event.value)">
+                            <mat-option value="invoice_no">Invoice No</mat-option>
+                            <mat-option value="order_date">Order Date</mat-option>
+                            <mat-option value="order_type">Order Type</mat-option>
+                        </mat-select>
+                        @if(seachOrdersForm.get('search_by')?.hasError('required')) {
+                            <mat-error>Field is <strong>required</strong></mat-error>
+                          }
+                      </mat-form-field>
+                </div>
+                <div>
+                    <mat-form-field appearance="outline" *ngIf="seachOrdersForm.get('search_by')?.value === 'order_type'">
+                        <mat-label>Search by</mat-label>
+                        <mat-select formControlName="order_type" >
+                            <mat-option value="purchase">Purchase</mat-option>
+                            <mat-option value="purchase_return">Purchase Return</mat-option>
+                            <mat-option value="sale">Sale</mat-option>
+                            <mat-option value="sale_return">Sale Return</mat-option>
+                            <mat-option value="not_approved">Not Approved</mat-option>
+                        </mat-select>
+                        @if(seachOrdersForm.get('order_type')?.hasError('required')) {
+                            <mat-error>Field is <strong>required</strong></mat-error>
+                          }
+                      </mat-form-field>
+                </div>
+                <div *ngIf="show_dates">
+                    <mat-form-field appearance="outline">
+                        <mat-label>Enter a date range</mat-label>
+                        <mat-date-range-input  [rangePicker]="picker">
+                          <input matStartDate formControlName="start" [max]="getToday()" placeholder="Start date">
+                          <input matEndDate formControlName="end"  [max]="getToday()" placeholder="End date">
+                        </mat-date-range-input>
+                        <mat-hint>MM/DD/YYYY – MM/DD/YYYY</mat-hint>
+                        <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+                        <mat-date-range-picker #picker></mat-date-range-picker>
+
+                        @if (seachOrdersForm.get("start")?.hasError('matStartDateInvalid')) {
+                          <mat-error>Invalid start date</mat-error>
+                        }@else if (seachOrdersForm.get("start")?.hasError('required')) {
+                            <mat-error>Field is <strong>required</strong></mat-error>
+                          }
+                        @if (seachOrdersForm.get("end")?.hasError('matEndDateInvalid')) {
+                          <mat-error>Invalid end date</mat-error>
+                        }
+                      </mat-form-field>
+                </div>
+
+                <div *ngIf="seachOrdersForm.get('search_by')?.value === 'invoice_no'">
+                    <mat-form-field appearance="outline">
+                        <mat-label>Invoice No</mat-label>
+                        <input matInput formControlName="seach_value" (change)="seach_value_ch($event)" type="text">
+                        @if (value) {
+                          <button matSuffix mat-icon-button aria-label="Clear" type="button" (click)="clear_fval()">
+                            <mat-icon>close</mat-icon>
+                          </button>
+                        }
+                        @if(seachOrdersForm.get('seach_value')?.hasError('required')) {
+                            <mat-error>Field is <strong>required</strong></mat-error>
+                          }
+                          @if(seachOrdersForm.get('seach_value')?.hasError('maxlength')) {
+                            <mat-error>Maximum <strong>30</strong></mat-error>
+                          }
+                      </mat-form-field>
+                </div>
+                <button mat-fab
+                color="primary"
+                    type="submit"
+                    [disabled]="seachOrdersForm.status == 'INVALID' "
+                >
+                <mat-icon >search</mat-icon>
+                </button>
+            </form>
+
+        </div>
+    </div>
+    <div *ngIf="is_sppiner">
+        <div style="position: relative; height: 400px;"> <ngx-spinner bdColor = "rgba(75, 221, 50, 0.8)" color = "#fff" [fullScreen]="false" class="spinner_custom" type="square-jelly-box"></ngx-spinner>
+        </div>
+      </div>
+
+    <div *ngIf="!is_sppiner" class="inner_page_table table-responsive">
+        <div class="no_data2" *ngIf="!data.length">
+            <p>No Data</p>
+        </div>
+
+        <app-order-grid
+        [data]="data"
+        [currentPage]="currentPage"
+        [itemsPerPage]="itemsPerPage"
+        [totalItems]="totalItems"
+        (pageChange)="pageChange($event)"
+        (editOrder)="editOrder($event.slug, $event.type)"
+        (approveOrder)="approve_order($event)">
+        </app-order-grid>
+        <!-- <app-order-grid [data]="data"></app-order-grid> -->
+
+        <!-- <table *ngIf="data.length" class="table table-striped ">
+            <thead>
+
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">#</th>
+                    <th scope="col">Invoice No</th>
+                    <th scope="col">Payment Details</th>
+                    <th scope="col">Type</th>
+                    <th scope="col">Order Date</th>
+                    <th scope="col">Khata</th>
+                    <th scope="col">Gst</th>
+                    <th scope="col">Grand Total</th>
+                    <th scope="col">Action</th>
+
+                </tr>
+            </thead>
+            <tbody>
+                @if (data.length) {
+
+                    @for ( item of this.data | paginate: { itemsPerPage: itemsPerPage, currentPage: currentPage, totalItems:totalItems }; track $index) {
+                        <tr>
+                            <td>{{item.id}}</td>
+                            <td> {{(itemsPerPage * (currentPage - 1)) + $index+1}}</td>
+                            <td>
+                            @if (item.order_type === 'debit') {
+                                <span class="badge bg-danger">{{item.invoice_no}}</span>
+                            }@else if (item.order_type === 'Debit') {
+                                <span class="badge bg-primary">{{item.invoice_no}}</span>
+                            }@else if (item.order_type === 'credit') {
+                                <span class="badge bg-warning">{{item.invoice_no}}</span>
+                            }@else if (item.order_type === 'Credit') {
+                                <span class="badge bg-success">{{item.invoice_no}}</span>
+                            }
+
+                            </td>
+                            <td>
+                                @if (item.paid_from?.length) {
+                                    @for (particluler of item.paid_from; track $index) {
+                                        <div class="particullers" *ngIf="particluler?.name">
+                                            <div [innerHTML]="particluler?.name | uppercase"></div>
+                                            <div [innerHTML]="particluler?.value | currency:'INR'"></div>
+                                        </div>
+                                    }
+                                }
+                            </td>
+                            <td  [ngClass]="(item.order_type | lowercase) === 'debit' ? 'green':'red'" >{{item.order_type | uppercase }}</td>
+                            <td>{{item.order_date}}</td>
+                            <td >
+                                <div class="vender_dtails" style="text-transform: capitalize;">
+                                    <div *ngIf="item.name">
+                                        <span>Name</span>
+                                        <div>{{item.name}}</div>
+                                    </div>
+                                    <div *ngIf="item.company_name">
+                                        <span>Company</span>
+                                        <div>{{item.company_name}}</div>
+                                    </div>
+                                    <div *ngIf="item.full_address">
+                                        <span>Full Address</span>
+                                        <div>{{item.full_address}}</div>
+                                    </div>
+                                    <div *ngIf="item.full_address">
+                                        <span>Mobile</span>
+                                        <div>{{item.mobile_no}}</div>
+                                    </div>
+                                    <div *ngIf="item.landline">
+                                        <span>Landline</span>
+                                        <div>{{item.landline}}</div>
+                                    </div>
+                                </div>
+
+                            </td>
+
+                            <td>
+                                <div class="vender_dtails">
+                                    <ng-container *ngIf="item.sgst > 0">
+                                        <div>
+                                            <span>GST</span>
+                                            <div>{{ (convertToNumber(item.cgst )+ convertToNumber(item.sgst)) | currency:"INR" }} </div>
+                                        </div>
+                                    </ng-container>
+                                    <ng-container *ngIf="item.igst > 0">
+                                        <div>
+                                            <span>GST: </span>
+                                            <div>{{ item.igst | currency:"INR" }}</div>
+                                        </div>
+                                    </ng-container>
+                                    <div *ngIf="item.gst_paid">
+                                        <span>GST Paid</span>
+                                        <div>{{item.gst_paid |  currency:"INR"}}</div>
+                                    </div>
+                                    <div *ngIf="item.gst_payble">
+                                        <span>GST Payble</span>
+                                        <div>{{item.gst_payble |  currency:"INR"}}</div>
+                                    </div>
+                                </div>
+
+                                <br>
+
+                            </td>
+
+                            <td>{{item.grand_total | currency:"INR"}}</td>
+                            <td class="action_icon">
+
+                                @if(item.order_type.toLowerCase() == 'debit' && item.is_returned != true && item.status === 'order_not_approve' ){
+                                    <button  (click)="editOrder(item.slug, 'purchase')" mat-mini-fab
+                                    color="accent"
+                                    matTooltip="Edit Order"
+                                    aria-label="Edit">
+                                        <mat-icon>edit</mat-icon>
+                                      </button>
+                                }@else if (item.order_type.toLowerCase() == 'credit' && item.is_returned != true && item.status === 'order_not_approve') {
+                                    <button  (click)="editOrder(item.slug, 'sale')"
+                                    mat-mini-fab color="warn"
+                                    matTooltip="Edit Order"
+                                    aria-label="Edit">
+                                        <mat-icon>edit</mat-icon>
+                                      </button>
+                                }
+
+                                    @if(!item.auto_approved && item.status == 'order_not_approve'){
+                                        <button
+                                        (click)="approve_order(item.id)"
+                                        mat-mini-fab color="primary"
+                                        aria-label="Approve"
+                                        matTooltip="Approve Order"
+                                        >
+                                            <mat-icon>thumb_up</mat-icon>
+                                          </button>
+                                    }
+                                    @if( item.status == 'rejected'){
+                                        <button mat-flat-button >Rejected</button>
+                                    }
+                                        <a [routerLink]="['/accounting/orders',this.currentPage,item.slug]"
+                                        mat-mini-fab
+                                        class="btn_green"
+                                        matTooltip="View Order"
+                                        aria-label="View">
+                                            <mat-icon>visibility</mat-icon>
+                                        </a>
+
+                            </td>
+                        </tr>
+
+                        }
+
+                }
+
+            </tbody>
+            <tfoot *ngIf="data.length && this.pages > 1 ">
+                <tr>
+                    <td colspan="9"><pagination-controls (pageChange)="pageChange($event)"></pagination-controls></td>
+                </tr>
+            </tfoot>
+        </table> -->
+
+    </div>
+</div>

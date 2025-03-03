@@ -1,0 +1,91 @@
+<div class="page_wrapper">
+    <div class="heading_with_btn">
+        <div>
+            <h1 class="heading1"> Company <strong>Income Statement</strong></h1>
+        </div>
+        <!-- <div>
+            <button mat-raised-button color="primary" (click)="routeToNew()"> <mat-icon>add</mat-icon>Employee</button>
+        </div> -->
+    </div>
+    <div class="search_form">
+        <div>
+            <form [formGroup]="trialSearchForm" (submit)="submit()">
+
+                <div>
+                    <mat-form-field appearance="outline">
+                        <mat-label>Enter a date range</mat-label>
+                        <mat-date-range-input  [rangePicker]="picker">
+                          <input matStartDate formControlName="start" placeholder="Start date">
+                          <input matEndDate formControlName="end" placeholder="End date">
+                        </mat-date-range-input>
+                        <mat-hint>MM/DD/YYYY – MM/DD/YYYY</mat-hint>
+                        <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+                        <mat-date-range-picker #picker></mat-date-range-picker>
+
+                        @if (trialSearchForm.get("start")?.hasError('matStartDateInvalid')) {
+                          <mat-error>Invalid start date</mat-error>
+                        }
+                        @if (trialSearchForm.get("end")?.hasError('matEndDateInvalid')) {
+                          <mat-error>Invalid end date</mat-error>
+                        }
+                      </mat-form-field>
+                </div>
+
+
+                <button mat-fab color="primary"
+                    type="submit"
+                    [disabled]="trialSearchForm.status == 'INVALID' "
+                >
+                <mat-icon >search</mat-icon>
+                </button>
+            </form>
+
+        </div>
+    </div>
+    <div *ngIf="is_spinner">
+        <div style="position: relative; height: 400px;"> <ngx-spinner bdColor = "rgba(75, 221, 50, 0.8)" color = "#fff" [fullScreen]="false" class="spinner_custom" type="square-jelly-box"></ngx-spinner>
+        </div>
+      </div>
+      <ng-container *ngIf="!is_spinner">
+        <h3 class="heading_h3">Income Statement From <span>{{start_date | date}}</span> To <span>{{end_date | date}}</span></h3>
+        <div  *ngIf="!ledger_rev.length && !ledger_exp.length" class="no_data2" > No Data</div>
+        <div *ngIf="ledger_rev.length || ledger_exp.length" class="income_section">
+            <div>
+                <h2>Income</h2>
+                <div class="inner">
+                    @for (item of ledger_rev; track $index) {
+                        <div>
+                            <div>{{$index + 1}}</div>
+                            <div>
+                                <a [routerLink]="['/accounting/ledgers/', item.slug,1]">
+                                    <strong>{{item.l_name | uppercase}}</strong>
+                                </a>
+                            </div>
+                            <div>{{item.bal | currency:"INR"}}</div>
+                        </div>
+
+                    }
+                </div>
+                <div class="amt"><strong>{{ledger_rev_amt | currency:"INR"}}</strong></div>
+            </div>
+            <div>
+                <h2>Expense</h2>
+                <div class="inner">
+                    @for (item of ledger_exp; track $index) {
+                        <div>
+                            <div>{{$index + 1}}</div>
+                            <div>
+                                <a [routerLink]="['/accounting/ledgers/', item.slug,1]">
+                                    <strong>{{item.l_name | uppercase}}</strong>
+                                </a>
+                            </div>
+                            <div>{{item.bal | currency:"INR"}}</div>
+                        </div>
+
+                    }
+                </div>
+                <div class="amt"><strong>{{ledger_exp_amt | currency:"INR"}}</strong></div>
+            </div>
+        </div>
+      </ng-container>
+</div>

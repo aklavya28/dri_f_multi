@@ -1,0 +1,76 @@
+.profile_area {
+    display: flex;
+    gap: 20px;
+}
+
+.profile_area>div {
+    flex: 1;
+}
+.personal_info>div {
+    display: flex;
+    gap: 10px;
+    font-size: 15px;
+    border-bottom: 1px solid #ddd;
+    padding: 5px;
+}
+
+.personal_info>div>div:first-child {
+    font-weight: 500;
+    min-width: 185px;
+    position: relative;
+}
+
+.personal_info>div>div:first-child:after {
+    content: ":";
+    position: absolute;
+    top: 0;
+    right: 10px;
+}
+
+.personal_info>div:last-child {
+    border: 0;
+}
+
+.profile.table {
+    border:1px solid #fff;
+    background-color: #e9e9e9;
+}
+
+.profile.table tr td {
+    border-bottom: 1px solid #fff;
+    padding: 6px 19px;
+    border-right: 1px solid #fff !important;
+}
+
+.profile.table tr:last-child td {
+    border: 0;
+
+}.profile.table tr td:first-child {
+    color: #1B5E20;
+
+}
+
+.profile.table tr td:last-child {
+    border-right: 0 !important;
+    font-weight: bold;
+}
+.setting_container {
+    display: flex;
+    gap: 20px;
+}
+.profile.table th {
+    padding: 10px;
+    background: #b63b4d;
+    color: #fff;
+    font-weight: normal;
+    text-transform: uppercase;
+}
+
+.profile.table tr th {
+    border-right: 1px solid #ffffff80;
+}
+
+.profile.table tr th:last-child {
+    border: 0;
+}
+.payout_tbl {max-height: 200px;overflow-y: auto;}

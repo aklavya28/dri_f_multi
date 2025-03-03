@@ -1,0 +1,43 @@
+.bill {
+    background: #fff;
+}
+
+.main_wrapper {
+    margin: 15px;
+}
+
+
+.table tr td, table tr th {
+    border: 1px solid #bdbdbd;
+    font-size:12px
+}
+
+.retrun_form {
+    display: flex;
+    gap: 15px;
+}
+
+.retrun_form>div mat-form-field {
+    min-width: 300px;
+}
+tr.return_order td, tr.return_order th {
+    background: #ddebe9 !important;
+    color: #003830;
+    border-color: #53d3c1 !important;
+}
+
+.table tr.no_border td{ border-bottom-color: transparent !important;}
+.table tr td p{margin: 0;}
+.table_outer{ padding: 15px; background-color: #fff; border-radius: 10px; margin-bottom: 40px;
+    table { margin-bottom: 0;}
+}
+@media print {
+    .table_outer{
+        padding: 0;
+        border-radius: 0;
+
+    }
+    .c_shadow{
+        box-shadow: none;
+    }
+}

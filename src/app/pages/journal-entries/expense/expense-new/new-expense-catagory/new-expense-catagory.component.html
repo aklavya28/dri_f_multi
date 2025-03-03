@@ -1,0 +1,81 @@
+<div class="page_wrapper">
+    <div class="c_shadow heading_with_btn mb-5">
+      <div class="back_button_heading">
+        <div class="backbutton">
+            <a mat-fab color="primary" [routerLink]="'/entries/expense-new'">
+            <mat-icon>arrow_back</mat-icon>
+          </a>
+        </div>
+        <h1 class="heading1">
+
+          Expense
+          <strong style="text-transform: capitalize">Categories</strong>
+        </h1>
+      </div>
+
+  </div>
+  <div class="body_multy">
+        <div class="inner_page_table table-responsive">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Name</th>
+                        <th>Is Active</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @for (item of categories; track $index) {
+                        <tr>
+                            <td>{{$index + 1}}</td>
+                            <td>{{item.name}}</td>
+                            <td>
+                                <mat-slide-toggle
+                                [ngModel]="item.is_active"
+                                (change)="change_active_exp_cat(item.id, $event )"
+                                >
+
+                                </mat-slide-toggle>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+
+            </table>
+        </div>
+        <div class="c_shadow heading_with_btn mb-5">
+            <form [formGroup]="catForm" (submit)="submit()">
+                <h2>Add Expense <strong>Category</strong> </h2>
+                <div>
+                    <mat-form-field appearance="outline">
+                        <mat-label>Category Name</mat-label>
+                        <input matInput formControlName="name" placeholder="Ex. Pizza" >
+                        @if(catForm.get('name')?.hasError('required')) {
+                            <mat-error>Name is <strong>required</strong></mat-error>
+                          } @if(catForm.get('name')?.hasError('alphanumeric')) {
+                            <mat-error>Enter vaild <strong>alphanumeric</strong></mat-error>
+                          }@if(catForm.get('name')?.hasError('maxlength')) {
+                            <mat-error>Maximum length <strong>30</strong></mat-error>
+                          }
+                      </mat-form-field>
+
+                </div>
+                <div style="position: relative; top: -10px; margin-bottom: -20px;" class="input_forms2_main" *ngIf="balance_check_err.length">
+                    <div class="error" *ngFor="let item of balance_check_err">
+                      <p>{{item}}</p>
+                    </div>
+                  </div>
+                  <br>
+                <div [ngStyle]="{ 'margin': balance_check_err.length ? '0 0 20px 0' : '-20px 0 20px 0' }" > <button mat-raised-button color="warn"
+                    type="submit"
+                    [disabled]="this.catForm.status == 'INVALID' "
+                  >Save Category</button>
+                </div>
+
+            </form>
+
+        </div>
+  </div>
+
+
+</div>

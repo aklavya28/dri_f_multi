@@ -1,0 +1,217 @@
+<div class="page_wrapper">
+
+
+  <div class="c_shadow heading_with_btn">
+    <div>
+        <h1 class="heading1"> Party <strong>Accounts</strong></h1>
+    </div>
+
+    <!-- <div>
+      <button mat-icon-button  class='nav_dropdown' [matMenuTriggerFor]="menu" aria-label="Example icon-button with a menu">
+        <mat-icon>more_vert</mat-icon>
+      </button>
+      <mat-menu #menu="matMenu">
+        <button mat-menu-item (click)="new_khata('khatabook/new-khata')">
+          <mat-icon>menu_book</mat-icon>
+          <span>Create New Khata</span>
+        </button>
+      </mat-menu>
+    </div>  -->
+ </div>
+
+ <div class="search_form">
+    <div>
+        <form [formGroup]="seachOrdersForm" (submit)="submit()">
+            <div>
+                <mat-form-field appearance="outline">
+                    <mat-label>Search by</mat-label>
+                    <mat-select formControlName="search_by" (selectionChange)="search_by_change($event.value)" >
+                        <mat-option value="mobile">Mobile</mat-option>
+                        <mat-option value="name">Name</mat-option>
+                        <mat-option value="ac">Account No</mat-option>
+                    </mat-select>
+                    @if(seachOrdersForm.get('search_by')?.hasError('required')) {
+                        <mat-error>Field is <strong>required</strong></mat-error>
+                      }
+                  </mat-form-field>
+            </div>
+            <div *ngIf="seachOrdersForm.get('search_by')?.value === 'mobile'">
+                <mat-form-field appearance="outline">
+                    <mat-label>Mobile</mat-label>
+                    <input matInput maxlength="10" placeholder="Ex. 9459724132"  formControlName="mobile">
+                    @if(seachOrdersForm.get('mobile')?.hasError('required')) {
+                        <mat-error>Field is <strong>required</strong></mat-error>
+                      }@else if(seachOrdersForm.get('mobile')?.hasError('invalidDigit')) {
+                        <mat-error>Invaild <strong>Digits</strong></mat-error>
+                      }
+                  </mat-form-field>
+            </div>
+            <div *ngIf="seachOrdersForm.get('search_by')?.value === 'name'">
+                <mat-form-field appearance="outline">
+                    <mat-label>Name</mat-label>
+                    <input matInput placeholder="Ex. sunil"  formControlName="name">
+                    @if(seachOrdersForm.get('name')?.hasError('required')) {
+                        <mat-error>Field is <strong>required</strong></mat-error>
+                      }@else if(seachOrdersForm.get('name')?.hasError('maxlength')) {
+                        <mat-error>Maximum <strong>30</strong></mat-error>
+                      }
+                  </mat-form-field>
+            </div>
+            <div *ngIf="seachOrdersForm.get('search_by')?.value === 'ac'">
+                <mat-form-field appearance="outline">
+                    <mat-label>Account Number</mat-label>
+                    <input matInput placeholder="Ex. CR00001"  formControlName="ac">
+                    @if(seachOrdersForm.get('ac')?.hasError('maxlength')) {
+                        <mat-error>Maximum <strong>30</strong></mat-error>
+                      }
+                      @if(seachOrdersForm.get('ac')?.hasError('required')) {
+                        <mat-error>Field is <strong>required</strong></mat-error>
+                      }
+                      @if(seachOrdersForm.get('ac')?.hasError('alphanumeric')) {
+                        <mat-error>Alphanumeric <strong>Only</strong></mat-error>
+                      }
+                  </mat-form-field>
+            </div>
+            <button mat-fab color="primary"
+                type="submit"
+                [disabled]="seachOrdersForm.status == 'INVALID' "
+            >
+            <mat-icon >search</mat-icon>
+            </button>
+        </form>
+
+    </div>
+</div>
+    <div *ngIf="is_sppiner">
+        <div style="position: relative; height: 400px;"> <ngx-spinner bdColor = "rgba(75, 221, 50, 0.8)" color = "#fff" [fullScreen]="false" class="spinner_custom" type="square-jelly-box"></ngx-spinner>
+        </div>
+    </div>
+
+      <div *ngIf="!is_sppiner" class="inner_page_table table-responsive">
+        <div class="no_data2" *ngIf="!data.length">
+            <p>No Data</p>
+        </div>
+        @if(data.length){
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Name</th>
+                    <th>Account Type</th>
+                    <th>Ledger Name</th>
+                    <th>Orders</th>
+                    <th>Balance</th>
+                    <th>Mobile</th>
+                    <th>Pan & Tan</th>
+                    <th>Address</th>
+                    <th>Active</th>
+
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+
+
+                    @for (item of data| paginate: { itemsPerPage: itemsPerPage, currentPage: currentPage, totalItems:totalItems }; track $index) {
+                        <tr>
+                            <td>{{(itemsPerPage * (currentPage - 1)) + $index+1}}</td>
+                            <!-- <td></td> -->
+                            <td style="text-transform: capitalize;">{{item.name}}</td>
+                            <td>
+                                @if (item?.khata_type.toLowerCase() == "debtor" ) {
+                                    <span ngClass="badge-success" class="badge">{{'debtor'| uppercase}} </span>
+                                }@else {
+                                    <span ngClass="badge-danger" class="badge">{{'creditor'| uppercase}} </span><br>
+                                }
+                            </td>
+
+                            <td>
+                                {{item.ledger_name}}
+                            </td>
+                            <td>
+                                {{ item.orders }}
+                            </td>
+                            <td>
+                                {{ item.balance | currency:"INR" }}
+                            </td>
+                            <td>{{item.mobile}}</td>
+                            <td>
+                                <div class="para">
+                                    <p *ngIf="item?.pan">Pan: {{item.pan}}</p>
+                                    <p *ngIf="item?.tan">Tan: {{item.tan}}</p>
+                                </div>
+
+
+                            </td>
+                            <td>{{item.address}}</td>
+                            <td>
+                                <mat-slide-toggle
+                                [ngModel]="item.is_active"
+                                (change)="change_active_status_khata($event,item.slug )"
+                                >
+
+                                </mat-slide-toggle>
+                            </td>
+
+                            <td>
+
+                                <div>
+                                    <div class="action_icon">
+                                        <button  class="btn_pink" mat-mini-fab [matMenuTriggerFor]="menu"> <mat-icon>more_horiz</mat-icon> </button>
+                                    </div>
+                                    <mat-menu #menu="matMenu">
+
+                                        <button mat-menu-item [routerLink]="['/khatabook/khata-orders',item.slug,item.name,1]" >
+                                            <mat-icon>storage</mat-icon>
+                                            <span>Orders</span>
+                                          </button>
+                                          <button mat-menu-item [routerLink]="['/khatabook/khata-profile',item.slug,item.name, 1]" >
+                                            <mat-icon>short_text</mat-icon>
+                                            <span>Entries</span>
+                                          </button>
+                                          <button mat-menu-item [routerLink]="['/khatabook/view-trans',item.slug,item.name, 1]" >
+                                              <mat-icon>account_balance_wallet</mat-icon>
+                                              <span>Khata Transactions</span>
+                                            </button>
+                                          <button mat-menu-item [routerLink]="['/khatabook/add-payment',item.slug,item.name]" >
+                                            <mat-icon>payment</mat-icon>
+                                            <span>Pay / Receive Money</span>
+                                          </button>
+                                    </mat-menu>
+
+
+
+
+
+
+                                  </div>
+
+
+
+                                <!-- <div class="btn_area_action">
+                                    <a [routerLink]="['/khatabook/edit-khata',item.slug]" mat-raised-button color="primary">EDIT</a>
+                                    <a [routerLink]="['/khatabook/view-trans',item.slug,item.name,1]" mat-raised-button color="primary">Trns</a>
+                                    <a [routerLink]="['/khatabook/khata-orders',item.slug,item.name,1]" mat-raised-button color="primary">orders</a>
+                                    <a [routerLink]="['/khatabook/khata-profile',item.slug,item.name, 1]" mat-raised-button color="primary">View</a>
+                                </div> -->
+                            </td>
+
+
+                        </tr>
+                    }
+
+
+            </tbody>
+
+            <tfoot *ngIf="data.length && this.pages > 1 ">
+
+                <tr>
+                    <!-- <td colspan="8"><pagination-controls (pageChange)="currentPage = $event"></pagination-controls></td> -->
+                    <td colspan="11"><pagination-controls (pageChange)="pageChange($event)"></pagination-controls></td>
+                </tr>
+            </tfoot>
+        </table>
+    }
+    </div>
+</div>
+

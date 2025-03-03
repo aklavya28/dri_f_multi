@@ -1,0 +1,192 @@
+<div class="page_wrapper">
+    <div class="heading_with_btn bg_w_p15">
+        <div>
+            <h1 class="heading1"> Our <strong>Employees</strong></h1>
+        </div>
+    </div>
+
+    <div class="salary">
+
+
+        <div>
+            <div *ngIf="is_spinner">
+                <div style="position: relative; height: 400px;"> <ngx-spinner bdColor = "rgba(75, 221, 50, 0.8)" color = "#fff" [fullScreen]="false" class="spinner_custom" type="square-jelly-box"></ngx-spinner>
+                </div>
+              </div>
+            <div  *ngIf="!is_spinner" class="inner_page_table table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th scope="col" colspan="2">#</th>
+
+                            <th scope="col">Name</th>
+                            <th scope="col">Mobile</th>
+                            <th scope="col">Allowance</th>
+                            <th scope="col">Deductions</th>
+                            <th scope="col">Advance</th>
+                            <th scope="col">Net Salary</th>
+                            <th scope="col">Gross Sallary</th>
+                            <th scope="col">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                        @if (employees.length) {
+                            @for (item of employees; track $index) {
+
+                                <tr>
+                                    <td>
+                                        <mat-checkbox color="primary" class="example-margin" [(ngModel)]="item.isChecked" (change)="onCheckboxChange(
+                                            {
+                                                slug: item.slug,
+                                                allwance:  item.salary_settings.allwance,
+                                                deduction:  item.salary_settings.deduction,
+                                                installment: +item.panding_installment?.amount,
+                                                net_salary: (item.salary_settings.net_salary - item.panding_installment?.amount ),
+                                                gross_salary:item.salary_settings.gross_salary,
+                                                break_up: item.salary_settings,
+                                                checked: item.isChecked,
+                                                installment_id: item.panding_installment?.id
+                                            }
+                                             )"></mat-checkbox>
+                                        </td>
+                                    <td>{{$index+1}}</td>
+                                    <!-- <td></td> -->
+                                    <td>{{item.full_name}}</td>
+
+                                    <td>{{item.mobile}}</td>
+
+                                  <td *ngIf="item.salary_settings">{{item.salary_settings.allwance | currency:"INR"}}</td>
+
+
+                                    <td *ngIf="item.salary_settings">{{item.salary_settings.deduction | currency:"INR"}}</td>
+                                    <td *ngIf="item.salary_settings">{{item.panding_installment?.amount | currency:"INR"}}</td>
+
+                                    <td *ngIf="item.salary_settings">{{(item.salary_settings.net_salary - item.panding_installment?.amount)| currency:"INR"}}</td>
+                                    <td *ngIf="item.salary_settings">{{item.salary_settings.gross_salary | currency:"INR"}}</td>
+
+
+                                    <td *ngIf="item.salary_settings">
+
+                                        <a
+                                        matTooltip="Salary Setting"
+                                        matTooltipClass="example-tooltip-uppercase"
+                                        aria-label="Button that shows a red tooltip"
+                                        [routerLink]="['/employees/edit-salary-setting', item.slug, item.full_name]"><mat-icon>settings</mat-icon></a>
+                                        <a
+                                        matTooltip="View profile"
+                                        matTooltipClass="example-tooltip-uppercase"
+                                        aria-label="Button that shows a red tooltip"
+                                        [routerLink]="['/employees/emp-profile', item.slug]"><mat-icon>account_circle</mat-icon></a>
+                                        <!-- <a mat-flat-button color="primary" [routerLink]="['/employees/all-employees', item.slug]" >View</a> -->
+                                </tr>
+                            }
+                        }
+                        @else {
+                            <tr>
+                                <td colspan="10" style="height: 400px; vertical-align: middle;"> No Data</td>
+                            </tr>
+                        }
+
+
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div>
+            <div class="last_child">
+                <h2 class="heading3">
+                   Salary  Disburse Detail
+                </h2>
+                <div class="inner_salary">
+                    <div>
+                        <div>Total Allowances</div>
+                        <div>{{totalAllowances | currency:"INR"}}</div>
+                    </div>
+                    <div>
+                        <div>Total Deductions</div>
+                        <div>{{totalDeductions | currency:"INR"}}</div>
+                    </div>
+                    <div>
+                        <div>Total Advances</div>
+                        <div>{{totalAdvance | currency:"INR"}}</div>
+                    </div>
+                    <div>
+                        <div>Total Net Salaries</div>
+                        <div>{{totalNetSalaries | currency:"INR"}}</div>
+                    </div>
+                    <div>
+                        <div>Total Gross Salaries</div>
+                        <div>{{totalGrossSalaries | currency:"INR"}}</div>
+                    </div>
+
+                </div>
+                <h2 class="heading3">
+                     Disburse
+                </h2>
+                <div class="dis_form">
+                    <form *ngIf="is_liquied" [formGroup]="disburseForm" (submit)="submit()">
+                        <div>
+                            <mat-form-field>
+                            <mat-label>Bank Name</mat-label>
+                            <mat-select
+                            formControlName="paid_from"
+                            [errorStateMatcher]="matcher"
+                             >
+                              @if (l_account.length) {
+                                  <mat-option *ngFor="let item of l_account "  value="{{item.id}}">{{item.name | uppercase}} Bal: {{item.balance | currency:"INR"}}</mat-option>
+                              }
+
+
+                          </mat-select>
+                          @if (disburseForm.get('paid_from')?.hasError('required')) {
+                              <mat-error>Bank Name is <strong>required</strong></mat-error>
+                            }
+                          </mat-form-field>
+                        </div>
+                        <div>
+                            <mat-form-field>
+                                <mat-label>Disburse Date</mat-label>
+                                <input matInput
+                                [max]="getToday()"
+                                formControlName="salary_date"
+                                [matDatepicker]="picker2">
+                                <mat-hint>MM/DD/YYYY</mat-hint>
+                                <mat-datepicker-toggle matIconSuffix [for]="picker2"></mat-datepicker-toggle>
+                                <mat-datepicker #picker2></mat-datepicker>
+                                @if(disburseForm.get('salary_date')?.hasError('required')) {
+                                  <mat-error>Date is <strong>required</strong></mat-error>
+                                }
+                                @if(disburseForm.get('salary_date')?.hasError('dateGreaterThanToday')) {
+                                  <mat-error> Date cannot be greater than <strong>today</strong></mat-error>
+                                }
+                              </mat-form-field>
+                        </div>
+                        @if (apierror.length) {
+                            <div class="error" >
+                              @for (item of apierror; track $index) {
+                                <p>{{item}}</p>
+                              }
+                            </div>
+
+                            <br>
+                          }
+                          <!-- <button mat-raised-button color="primary"
+                                type="submit"
+                                class="full_width"
+                                [disabled]="this.disburseForm.status == 'INVALID' "
+                            >Disburse</button> -->
+                            <button mat-raised-button color="primary"
+                                type="submit"
+                                class="full_width"
+
+                            >Disburse</button>
+
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>

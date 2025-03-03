@@ -1,0 +1,185 @@
+<div class="page_wrapper">
+    <div class="heading_with_btn">
+        <div>
+            <h1 class="heading1"> Allocate Share for <strong style="text-transform: capitalize;">{{name}}</strong></h1>
+        </div>
+    </div>
+
+    @if (share_price>1 && liquid.length) {
+        {{this.shareForm.get('nominal_value')?.setValue(this.share_price)}}
+        <form action=""[formGroup]="shareForm" (submit)="submit()">
+            <div class="c_shadow input_forms">
+                  <div>
+                      <mat-form-field appearance="outline">
+                          <mat-label>Nominal Value</mat-label>
+                          <input matInput
+                            formControlName="nominal_value"
+                              >
+                          <!-- <mat-hint align="start"><strong>Don't disclose personal info</strong> </mat-hint> -->
+
+                          <!-- @if (bankForm.get('ac_holder_name')?.hasError('required')) {
+                            <mat-error>A/c Holder Name is <strong>required</strong></mat-error>
+                          } @if (bankForm.get('ac_holder_name')?.hasError('pattern')) {
+                            <mat-error>Only valid  <strong>Digits & characters</strong></mat-error>
+                          } -->
+                        </mat-form-field>
+                  </div>
+                  <div>
+                    <mat-form-field>
+                        <mat-label>Date</mat-label>
+                        <input matInput
+                        [min]="getTodayBefore10()"
+                        [max]="getToday()"
+                        formControlName="allotment_date"
+                        [matDatepicker]="picker">
+                        <mat-hint>MM/DD/YYYY</mat-hint>
+                        <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+                        <mat-datepicker #picker></mat-datepicker>
+                        @if(shareForm.get('allotment_date')?.hasError('required')) {
+                          <mat-error> Date is <strong>required</strong></mat-error>
+                        }@else if(shareForm.get('allotment_date')?.hasError('dateGreaterThanToday')) {
+                          <mat-error> Date cannot be greater than <strong>today</strong></mat-error>
+                        }
+
+                      </mat-form-field>
+                  </div>
+                  <div>
+                    <mat-form-field class="example-full-width">
+                        <mat-label>Number of Shares</mat-label>
+                        <input matInput
+                            type="number"
+                          formControlName="total_shares"
+                            >
+                        <mat-hint align="start">Total Share Price <strong>
+                            {{(shareForm.get('nominal_value')?.value * shareForm.get('total_shares')?.value) | currency:"INR" }}
+                        </strong> </mat-hint>
+
+                        @if (shareForm.get('total_shares')?.hasError('required')) {
+                          <mat-error>Share is <strong>required</strong></mat-error>
+                        }@else if (shareForm.get('total_shares')?.hasError('invalidDigit')) {
+                          <mat-error>Only valid  <strong>Digits</strong></mat-error>
+                        } @else if (shareForm.get('total_shares')?.hasError('min')) {
+                            <mat-error>Minimum 1 <strong>Share</strong></mat-error>
+                          }
+                        @else if (shareForm.get('total_shares')?.hasError('max')) {
+                            <mat-error>Maximum {{"1000000" | currency:"INR"}}<strong> Shares</strong></mat-error>
+                          }
+
+                      </mat-form-field>
+                      <!-- {{shareForm.get('total_shares')?.errors| json}} -->
+
+                  </div>
+
+
+
+                  <div>
+                    <mat-form-field>
+                        <mat-label>Payment Mode Ledger</mat-label>
+                        <mat-select
+                        formControlName="payment_ledger_id"
+                        >
+                          @for (item of liquid; track item) {
+                            <mat-option [value]="item.id+','+item.is_bank">{{item.name | uppercase}} / {{item.balance | currency:"INR"}} </mat-option>
+                          }
+                        </mat-select>
+                        @if (shareForm.get('payment_ledger_id')?.hasError('required') && shareForm.touched) {
+                            <mat-error>Payment type is <strong>required</strong></mat-error>
+                          }
+                      </mat-form-field>
+                </div>
+                @if (show_bank_inputs) {
+                    <div class="bank_payments">
+                        <div>
+                            <label>Paid Through Cheque?</label>
+                            <mat-radio-group aria-label="Through Cheque" color="primary" formControlName="is_cheque">
+                                <mat-radio-button value="true">Yes</mat-radio-button>
+                                <mat-radio-button [checked]="true"  value="false">No</mat-radio-button>
+                              </mat-radio-group>
+                        </div>
+
+                        @if (check_paid) {
+                            <div class="cheque">
+                                <div>
+                                    <mat-form-field class="example-full-width">
+                                    <mat-label>Bank Name</mat-label>
+                                    <input matInput
+
+                                      formControlName="bank_name"
+                                      maxlength="50"
+                                      minlength="5"
+                                      >
+
+                                    @if (shareForm.get('bank_name')?.hasError('required')) {
+                                      <mat-error>Bank name is <strong>required</strong></mat-error>
+                                    } @else if (shareForm.get('bank_name')?.hasError('alphabets')) {
+                                      <mat-error>Only valid  <strong>alphabets</strong></mat-error>
+                                    } @else if (shareForm.get('bank_name')?.hasError('minlength')) {
+                                        <mat-error>Minimum 5 <strong>alphabets</strong></mat-error>
+                                      }
+                                      @else if (shareForm.get('bank_name')?.hasError('maxlength')) {
+                                        <mat-error>Maximum 50 <strong>alphabets</strong></mat-error>
+                                      }
+
+                                  </mat-form-field>
+                                </div>
+                                <div>
+                                    <mat-form-field class="example-full-width">
+                                        <mat-label>Cheque Number</mat-label>
+                                        <input matInput
+                                          formControlName="cheque_no"
+                                          minlength="6"
+                                          maxlength="6"
+                                            >
+
+                                        @if (shareForm.get('cheque_no')?.hasError('required')) {
+                                          <mat-error>Cheque number is <strong>required</strong></mat-error>
+                                        } @else if (shareForm.get('cheque_no')?.hasError('invalidDigit')) {
+                                          <mat-error>Only valid  <strong>Digits</strong></mat-error>
+                                        } @else if (shareForm.get('cheque_no')?.hasError('minlength')) {
+                                            <mat-error>Minimum 6 <strong>Digit</strong></mat-error>
+                                          }
+                                          @else if (shareForm.get('cheque_no')?.hasError('maxlength')) {
+                                            <mat-error>Maximum 6 <strong>Digit</strong></mat-error>
+                                          }
+
+                                      </mat-form-field>
+                                </div>
+                            </div>
+                        }@else {
+                            <div class="utr_no">
+                                <mat-form-field class="example-full-width">
+                                    <mat-label>Transaction Id</mat-label>
+                                    <input matInput
+                                      formControlName="utr_no"
+                                      maxlength="22"
+                                      minlength="12"
+                                        >
+
+                                    @if (shareForm.get('utr_no')?.hasError('required')) {
+                                      <mat-error>Share is <strong>required</strong></mat-error>
+                                    } @else if (shareForm.get('utr_no')?.hasError('minlength')) {
+                                      <mat-error>Minimum 12 <strong>Digits</strong></mat-error>
+                                    }@else if (shareForm.get('utr_no')?.hasError('maxlength')) {
+                                      <mat-error>Maximum 22 <strong>Digits</strong></mat-error>
+                                    }
+
+                                  </mat-form-field>
+                            </div>
+                        }
+                    </div>
+                }
+
+            </div>
+
+            <div>
+
+              <button mat-raised-button color="primary"
+                type="submit"
+                [disabled]="this.shareForm.status == 'INVALID'"
+              >Assign</button>
+        </div>
+        </form>
+
+    }
+
+  </div>

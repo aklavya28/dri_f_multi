@@ -1,0 +1,51 @@
+<div class="page_wrapper">
+    <div class="heading_with_btn">
+        <div>
+            <h1 class="heading1"> Company <strong>Banks</strong></h1>
+        </div>
+        <div class="action_icon">
+            <a class="btn_pink" [routerLink]="['/company/new-bank']" mat-mini-fab matTooltip="New Bank" matTooltipPosition="above"><mat-icon>add</mat-icon></a>
+            <!-- <button mat-flat-button color="primary" >New Bank</button> -->
+        </div>
+    </div>
+
+    <div class="inner_page_table">
+        <table class="table table-striped">
+            <thead *ngIf="banks.length">
+                <tr>
+                    <th>#</th>
+                    <th>Bank Name</th>
+                    <th>A/c Holder Name</th>
+                    <th>Bank A/c Number</th>
+                    <th>Ifsc</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+
+                @if (banks.length) {
+                    @for ( bank of banks;track $index) {
+                        <tr >
+                            <td>{{$index+1 }} </td>
+                            <td>{{bank.bank_name }} </td>
+                            <td>{{bank.ac_holder_name}}</td>
+                            <td>{{bank.ac_number}}</td>
+                            <td>{{bank.ifsc }}</td>
+
+                            <td>
+                                <div class="action_icon">
+                                    <button class="btn_green" mat-mini-fab matTooltip="Edit" (click)="editBank(bank)"><mat-icon>edit</mat-icon></button>
+                                </div>
+                            </td>
+
+                        </tr>
+                    }
+                }@else {
+                    <tr>
+                        <td style="vertical-align: middle; text-align: center; height: 150px;" colspan="6"> No Data</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

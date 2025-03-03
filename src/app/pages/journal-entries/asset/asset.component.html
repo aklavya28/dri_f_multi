@@ -1,0 +1,204 @@
+<div class="page_wrapper">
+  <div class="heading_with_btn">
+      <div>
+          <h1 class="heading1">Journal <strong>Entry</strong></h1>
+      </div>
+
+  </div>
+
+
+
+
+
+
+  <form [formGroup]="journalForm" (submit)="submit()">
+      <div class="fields">
+            <div class="top_fields">
+              <div>
+                <!-- <mat-form-field>
+                  <mat-label>Date</mat-label> -->
+                  <!-- <input matInput
+                     [min]="getTodayBefore10()"
+                  [max]="getToday()"
+                  formControlName="date"
+                  [matDatepicker]="picker">
+                  <mat-hint>MM/DD/YYYY</mat-hint>
+                  <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+                  <mat-datepicker #picker></mat-datepicker>
+                  @if(journalForm.get('date')?.hasError('required')) {
+                    <mat-error> Date is <strong>required</strong></mat-error>
+                  }@if(journalForm.get('date')?.hasError('dateGreaterThanToday')) {
+                    <mat-error> Date cannot be greater than <strong>today</strong></mat-error>
+                  }
+                </mat-form-field>  -->
+                <mat-form-field appearance="outline">
+                  <mat-label>Date</mat-label>
+                  <input matInput
+
+                  [max]="getToday()"
+                  formControlName="date"
+                  [matDatepicker]="picker">
+                  <mat-hint>MM/DD/YYYY</mat-hint>
+                  <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+                  <mat-datepicker #picker></mat-datepicker>
+                  @if(journalForm.get('date')?.hasError('required')) {
+                    <mat-error> Date is <strong>required</strong></mat-error>
+                  }@if(journalForm.get('date')?.hasError('dateGreaterThanToday')) {
+                    <mat-error> Date cannot be greater than <strong>today</strong></mat-error>
+                  }
+                </mat-form-field>
+
+              </div>
+              <div>
+                <mat-form-field appearance="outline">
+                    <mat-label>Narration</mat-label>
+                    <textarea matInput
+                        formControlName="narration"
+                    ></textarea>
+                    @if(journalForm.get('narration')?.hasError('required')) {
+                        <mat-error> Narration is <strong>required</strong></mat-error>
+                      }
+                      @if(journalForm.get('narration')?.hasError('minlength')) {
+                        <mat-error> Minimum length is<strong> 15 Characters</strong></mat-error>
+                      } @if(journalForm.get('narration')?.hasError('maxlength')) {
+                        <mat-error> Maximum length is<strong> 200 Characters</strong></mat-error>
+                      }
+                  </mat-form-field>
+
+              </div>
+            </div>
+            <div class="debit_area">
+                <h3><span>Debit</span></h3>
+                <div formArrayName="debit" *ngFor="let o of debit.controls; let i = index">
+                  <div [formGroupName]="i">
+                        <div>
+                          <mat-form-field appearance="outline">
+                            <mat-label>Account</mat-label>
+                            <input type="text"
+                                   placeholder="Pick one"
+                                   aria-label="Number"
+                                   formControlName="ledger_name"
+                                   matInput
+                                   (focus)="filter_accounts(i,'debit')"
+                                   [matAutocomplete]="auto">
+                                   <mat-autocomplete #auto  (optionSelected)="onOptionSelect($event.option.value,i,'debit')">
+                                    @for (option of filteredCat | async; track option) {
+                                      <!-- <mat-option  [value]="option.name+','+option.hsn_sac +','+ option.id">{{option.id}}/{{(option.name +'/'+ option.hsn_sac) | uppercase}}</mat-option> -->
+                                      <!-- <mat-option  value="{{option.id}},{{option.name}}">{{(option.name ) | uppercase}}</mat-option> -->
+                                      <mat-option  [value]="option">{{(option.name)  | uppercase}}</mat-option>
+                                    }
+                                  </mat-autocomplete>
+                                  @if (journalForm.get('debit')?.get(i.toString())?.get('ledger_name')?.hasError('match')) {
+                                    <mat-error>No Account is <strong>selected</strong></mat-error>
+                                  }@else if (journalForm.get('debit')?.get(i.toString())?.get('ledger_name')?.hasError('required')) {
+                                    <mat-error>Transfer mode is <strong>required</strong></mat-error>
+                                  }
+                          </mat-form-field>
+
+                        </div>
+
+                        <div>
+                          <mat-form-field appearance="outline">
+                              <mat-label>Amount</mat-label>
+                              <input type="number"
+                              matInput
+                                  formControlName="amount"
+                              >
+                              @if(journalForm.get('debit')?.get(i.toString())?.get('amount')?.hasError('required')) {
+                                  <mat-error> Amount is <strong>required</strong></mat-error>
+                                }@if(journalForm.get('debit')?.get(i.toString())?.get('amount')?.hasError('min')) {
+                                  <mat-error> Amount is <strong>1</strong></mat-error>
+                                }
+
+                            </mat-form-field>
+                        </div>
+                      @if (i !=0) {
+
+                          <div>
+                              <button mat-fab color="warn" (click)="removeDebit(i)">
+                                  <mat-icon>delete</mat-icon>
+                              </button>
+                          </div>
+                      }
+                      </div>
+
+
+                </div>
+                <button mat-raised-button color="primary"
+                (click)="addNewDebit()"
+                      [disabled]="journalForm.get('debit')?.status == 'INVALID' "
+                  >Add New Debit</button>
+            </div>
+          <div class="debit_area">
+              <h3><span>Credit</span></h3>
+                <div  formArrayName="credit" *ngFor="let o of credit.controls; let i = index">
+                  <div [formGroupName]="i">
+                      <div>
+                        <mat-form-field appearance="outline">
+                          <mat-label>Account</mat-label>
+                          <input type="text"
+                                 placeholder="Pick one"
+                                 aria-label="Number"
+                                 formControlName="ledger_name"
+                                 matInput
+                                 (focus)="filter_accounts(i,'credit')"
+                                 [matAutocomplete]="auto">
+                                 <mat-autocomplete #auto  (optionSelected)="onOptionSelect($event.option.value,i,'credit')">
+                                  @for (option of filteredCat | async; track option) {
+                                    <mat-option  [value]="option">{{(option.name)  | uppercase}}</mat-option>
+                                  }
+                                </mat-autocomplete>
+                                @if (journalForm.get('credit')?.get(i.toString())?.get('ledger_name')?.hasError('match')) {
+                                  <mat-error>No Account is <strong>selected</strong></mat-error>
+                                }@else if (journalForm.get('credit')?.get(i.toString())?.get('ledger_name')?.hasError('required')) {
+                                  <mat-error>Transfer mode is <strong>required</strong></mat-error>
+                                }
+                        </mat-form-field>
+
+                      </div>
+                        <div>
+                          <mat-form-field appearance="outline">
+                              <mat-label>Amount</mat-label>
+                              <input type="number"
+                              matInput
+                                  formControlName="amount"
+                              >
+                              @if(journalForm.get('credit')?.get(i.toString())?.get('amount')?.hasError('required')) {
+                                  <mat-error> Amount is <strong>required</strong></mat-error>
+                                }@if(journalForm.get('credit')?.get(i.toString())?.get('amount')?.hasError('min')) {
+                                  <mat-error> Amount is <strong>1</strong></mat-error>
+                                }
+
+                            </mat-form-field>
+                        </div>
+                        @if (i !=0) {
+
+                          <div>
+                              <button mat-fab color="warn" (click)="removeCredit(i)">
+                                  <mat-icon>delete</mat-icon>
+                              </button>
+                          </div>
+                      }
+                      </div>
+
+
+                </div>
+                <button mat-raised-button color="primary"
+                (click)="addNewCredit()"
+                      [disabled]="journalForm.get('credit')?.status == 'INVALID' "
+                  >Add New Credit</button>
+            </div>
+
+      </div>
+      @if (accout_validation.length) {
+        <div class="error mb-4">
+            <p *ngFor="let err of accout_validation"[innerHTML]="err"></p>
+        </div>
+      }
+      <button mat-raised-button color="primary"
+      type="submit"
+      [disabled]="this.journalForm.status == 'INVALID' "
+    >Save</button>
+  </form>
+</div>
+<!-- {{ journalForm.value | json}} -->

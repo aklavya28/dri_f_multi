@@ -1,0 +1,60 @@
+  <div class="page_wrapper">
+
+    <h1 class="heading1">Create new <strong>Category</strong></h1>
+  <div class="c_card_body">
+    <form [formGroup]="newCategoryForm" (submit)="submit()">
+       <div class="field_area">
+
+
+
+          <div>
+            <mat-form-field appearance="outline">
+                <mat-label>Category Name</mat-label>
+                <input matInput
+                formControlName="name"
+                [errorStateMatcher]="matcher"
+                >
+                @if(newCategoryForm.get('name')?.hasError('required')) {
+                    <mat-error>Category name is <strong>required</strong></mat-error>
+                  }
+                  @if(newCategoryForm.get('name')?.hasError('minlength')) {
+                    <mat-error>Minimum length is 3 <strong>characters</strong></mat-error>
+                  }
+                @if(newCategoryForm.get('name')?.hasError('pattern')) {
+                    <mat-error>Only valid <strong>Characters</strong></mat-error>
+                  }
+            </mat-form-field>
+
+          </div>
+
+          <div>
+            <mat-form-field appearance="outline">
+                <mat-label>Description </mat-label>
+                <textarea matInput
+                    formControlName="description"
+                    [errorStateMatcher]="matcher"
+                ></textarea>
+
+                <!-- @if(newCategoryForm.get('description')?.hasError('pattern')) {
+                    <mat-error>Only valid <strong>Characters</strong></mat-error>
+                  } -->
+              </mat-form-field>
+          </div>
+
+
+
+
+        </div>
+
+
+      <!-- <button mat-button type="submit">Basic</button> -->
+      <button mat-raised-button color="primary"
+        type="submit"
+        [disabled]="this.newCategoryForm.status == 'INVALID'"
+      >Save</button>
+      <!-- {{newCategoryForm.value | json}} -->
+    </form>
+
+  </div>
+
+  </div>

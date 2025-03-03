@@ -1,0 +1,29 @@
+.red{color: red;}
+.green{color: green;}
+.button_gap{display: flex; gap: 10px;}
+.inner_page_table table tbody tr> td:last-child {
+    border-left: 1px solid #dbdbdb;
+}
+.vender_dtails>div {
+    display: flex;
+    gap: 10px;
+    font-size: 12px;
+}
+
+.vender_dtails>div>span {
+    width: 78px;
+    position: relative;
+    color: #2E7D32;
+}
+
+.vender_dtails>div>span::after {
+    content: ":";
+    position: absolute;
+    right: 1px;
+    font-weight: bold;
+}
+
+tr.return_order > td {
+    background:linear-gradient(180deg, #ffffff, #f3f7d3) !important
+
+}

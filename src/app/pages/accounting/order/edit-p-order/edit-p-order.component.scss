@@ -1,0 +1,124 @@
+.main_wrapper {
+    margin: 25px 15px;
+}
+
+.innerwrapper {
+    background: #fff;
+    padding: 20px;
+    border-radius: 6px;
+    box-shadow: 0 0 10px #b7b7b7;
+}
+.main_fields {display: flex;gap: 0 10px;flex-flow: row wrap;}
+
+.main_fields mat-form-field {min-width: 360px;}
+.produc_form_fields {
+    display: flex;
+    gap: 0 15px;
+    background: #e0eaff1c;
+    padding: 15px;
+    flex-flow: row wrap;
+    margin: 19px 0;
+    border-radius: 5px;
+    border: 1px solid #efefef;
+}
+
+.produc_form_fields mat-form-field {
+    min-width: 346px;
+}
+.btns_cancel_add {
+    gap: 10px;
+    display: flex;
+}
+.btn_area {
+    display: flex;
+    width: 100%;
+    margin-bottom: 16px;
+    gap: 10px;
+}
+.error{ position: relative; top:-30px}
+.chares_remarks {
+
+    width: 100%;
+    display: flex;
+    gap: 15px;
+    flex-flow: row wrap;
+}
+.muty_inputs{ display: flex; gap: 15px; flex-flow: row wrap;}
+.no_shadow {
+    box-shadow: none !important;  /* Remove shadow */
+  }
+  .button_container {
+    margin: 0 auto 44px;
+    display: flex;
+    gap: 20px;
+    align-items: center;
+    justify-content: center;
+    background: #03a9f433;
+    padding: 13px 10%;
+    border-radius: 9px;
+}
+
+.button_container>div {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    max-width: 300px;
+}
+
+.button_container>div button {
+    margin: 0 !important;
+    width: 100%;
+    height: 60px;
+    font-size: 20px;
+}
+.button_container>div button mat-icon {
+    color: #fff;
+    width: 40px !important;
+    height: 30px !important;
+    font-size: 34px !important;
+}
+.table_outer {
+    padding: 10px;
+    background: #ffffff;
+    border-radius: 10px;
+    margin-bottom: 22px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2784313725);
+    font-size: 14px !important;
+}
+
+.table_outer table {
+    margin-bottom: 0;
+    border-color: #b4dbed;
+}
+.c_shadow2{
+
+    padding: 10px 15px 10px;
+    border-radius: 5px;
+    margin-bottom: 45px !important;
+    background-color: rgb(255 59 59 / 12%);
+    border:1px solid #ff9696;
+ }
+ .kahta_info>div {
+    display: flex;
+    gap: 10px;
+    font-size: 14px;
+    color: #3F51B5;
+    font-weight: bold;
+    margin-bottom: 9px;
+    text-transform: capitalize;
+}
+
+.kahta_info>div>div:first-child {
+    position: relative;
+    width: 91px;
+    font-weight: normal;
+    color: #000;
+}
+
+.kahta_info>div>div:first-child:after {
+    content: ":";
+    position: absolute;
+    right: 2px;
+    top: 0;
+}

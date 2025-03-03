@@ -1,0 +1,56 @@
+.income_section {
+    display: flex;
+    gap: 20px;
+}
+
+.income_section > div {
+    flex: 1;
+}
+
+income_section .inner {
+    background: red;
+}
+
+.income_section > div .inner>div {
+    background: white;
+    margin-bottom: 3px;
+    display: flex;
+    /* padding: 5px; */
+    justify-content: flex-start;
+    align-items: center;
+    padding: 7px;
+}
+
+.income_section > div .inner>div >div {
+    flex: 1;
+    font-size: 14px;
+}
+
+.income_section > div .inner>div >div:first-child {
+    max-width: 40px !important;
+    padding: 3px 10px;
+}
+
+.income_section > div .inner>div >div a {
+    color: #6c6666;
+    text-decoration: none;
+    font-size: 13px;
+}
+
+.income_section > div .inner>div >div:last-child {
+    max-width: 240px;
+    text-align: right;
+}
+
+.income_section > div .amt {
+    background: #6fb0cd;
+    padding: 11px;
+    text-align: right;
+    color: #fff;
+    border-radius: 0 0 6px 5px;
+}
+
+.income_section h2 {
+    font-size: 24px;
+    color: #009688;
+}

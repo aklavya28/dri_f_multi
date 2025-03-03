@@ -1,0 +1,20 @@
+.body_multy {
+    display: flex;
+    gap: 20px;
+}
+
+.body_multy>div {
+    flex: 1;
+    justify-content: flex-start;
+    align-items: start;
+}
+
+.body_multy>div:last-child h2 {
+    font-size: 21px;
+    position: relative;
+    margin-top: 10px;
+}
+
+.body_multy>div:last-child mat-form-field {
+    min-width: 330px;
+}

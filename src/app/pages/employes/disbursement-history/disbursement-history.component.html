@@ -1,0 +1,71 @@
+<div class="page_wrapper">
+    <div class="heading_with_btn">
+        <div>
+            <h1 class="heading1">Disbursed Salary <strong>History</strong></h1>
+        </div>
+
+    </div>
+    <div class="inner_page_table table-responsive">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Salary Date</th>
+                    <th scope="col">Allowances</th>
+                    <th scope="col">Deductions</th>
+                    <th scope="col">Salary Advance</th>
+                    <th scope="col">Net Salaries</th>
+                    <th scope="col">Gross Salaries</th>
+                    <th scope="col">Pocessed</th>
+                    <th scope="col">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (history.length) {
+                    @for (item of history; track $index) {
+
+                        <tr class="{{!item.salary_settings ? 'red': ''}}">
+                            <td>{{$index+1}}</td>
+                            <!-- <td></td> -->
+                            <td>{{item.salary_date | date}}</td>
+                            <td>{{item.allowances}}
+                                <!-- <div *ngFor="let i of item.allowances_breack_up">
+                                    {{i}}
+                                </div> -->
+
+                            </td>
+                            <td>{{item.deductions}}</td>
+                            <td>{{item.installment}}</td>
+                            <td>{{item.net_salaries}}</td>
+                            <td>{{item.gross_salaries }}</td>
+                            <td>
+                                <span ngClass="{{ item.is_processed ? 'badge-success': 'badge-danger' }} " class="badge">{{item.is_processed ? 'Yes': 'No  '}}</span>
+                            </td>
+                            <td>
+
+                                <!-- <a
+                                matTooltip="Salary Setting"
+                                matTooltipClass="example-tooltip-uppercase"
+                                aria-label="Button that shows a red tooltip"
+                                [routerLink]="['/employees/salary-setting', item.slug, item.full_name]"><mat-icon>settings</mat-icon></a> -->
+                             <a
+                                matTooltip="Disbursed Detail"
+                                matTooltipClass="example-tooltip-uppercase"
+                                aria-label="Button that shows a red tooltip"
+                                [routerLink]="['/employees/disbursement-history', item.slug, item.salary_date]"><mat-icon>visibility</mat-icon></a>
+
+                        </tr>
+                    }
+                }
+                @else {
+                    <tr>
+                        <td colspan="10" style="height: 400px; vertical-align: middle;"> No Data</td>
+                    </tr>
+                }
+
+
+
+            </tbody>
+        </table>
+    </div>
+</div>

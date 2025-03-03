@@ -1,0 +1,63 @@
+.salary {
+    display: flex;
+    gap: 20px;
+}
+
+.salary>div {
+    flex: 1;
+}
+
+.salary>div:last-child {
+    max-width: 294px;
+    position: relative;
+}
+
+.last_child {
+    background: #fff;
+    border-radius: 4px;
+    box-shadow: 0 3px 5px #c3c3c3;
+    position: fixed;
+    width: 294px;
+}
+
+.last_child>div>div {
+    display: flex;
+    gap: 10px;
+    font-size: 14px;
+    padding: 5px 10px;
+    border-bottom: 1px solid #e3e3e3;
+}
+
+.inner_salary>div>div:first-child {
+    width: 146px;
+    position: relative;
+    color: #009688;
+}
+.inner_salary>div>div::after{
+    content: ":";
+    position: absolute;
+    right: 5px;
+    top: 0;
+}
+.last_child>div>div:last-child {
+    border: 0;
+}
+
+.last_child> h2 {
+    font-size: 19px;
+    font-weight: 500;
+    padding: 10px;
+    margin: 0;
+    border-bottom: 1px solid #e3e3e3;
+}
+.full_width {
+    width: 100%;
+}
+
+.dis_form {
+    margin: 10px;
+}
+
+.dis_form mat-form-field {
+    width: 100%;
+}

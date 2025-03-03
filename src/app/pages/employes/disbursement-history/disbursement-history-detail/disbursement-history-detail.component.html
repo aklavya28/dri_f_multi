@@ -1,0 +1,91 @@
+<div class="page_wrapper">
+    <div class="heading_with_btn">
+        <div>
+            <h1 class="heading1">Disbursed Salary <strong>History Detail</strong></h1>
+        </div>
+
+    </div>
+    <div class="inner_page_table table-responsive">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Salary Date</th>
+                    <th scope="col">Employee Name</th>
+                    <th scope="col">Designation</th>
+                    <th scope="col">Allowances</th>
+                    <th scope="col">Deductions</th>
+                    <th scope="col">Net Salaries</th>
+                    <th scope="col">Gross Salaries</th>
+                    <th scope="col">Salary Breckup</th>
+                    <th scope="col">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (seleries.length) {
+                    @for (item of seleries; track $index) {
+
+                        <tr class="{{!item.salary_settings ? 'red': ''}}">
+                            <td>{{$index+1}}</td>
+                            <!-- <td></td> -->
+                            <td>{{detail_date | date}}</td>
+                            <td>{{item.full_name}}
+                                <!-- <div *ngFor="let i of item.allowances_breack_up">
+                                    {{i}}
+                                </div> -->
+
+                            </td>
+                            <td>{{item.designation}}</td>
+                            <td>{{item.allwance}}</td>
+                            <td>{{item.deduction}}</td>
+                            <td>{{item.net_salary}}</td>
+                            <td>{{item.gross_salary }}</td>
+                            <td class="breck_up">
+                                <div>
+
+                                    @for (b of item.break_up.item_data; track $index) {
+
+                                        <div>
+                                            <div class="first">{{b.allowance_id.split(',')[2] | uppercase}}</div>
+                                            <div>{{b.amount | currency:"INR"}}</div>
+                                        </div>
+                                    }
+                                    <div *ngIf="item.installment > 0">
+                                        <div class="first">Installment</div>
+                                        <div>{{item.installment | currency:"INR"}}</div>
+                                    </div>
+
+                                </div>
+                            </td>
+                            <td>
+                                <span ngClass="{{ item.is_active ? 'badge-success': 'badge-danger' }} " class="badge">{{item.is_active ? 'Yes': 'No  '}}</span>
+                            </td>
+                            <td>
+
+                                <!-- <a
+                                matTooltip="Salary Setting"
+                                matTooltipClass="example-tooltip-uppercase"
+                                aria-label="Button that shows a red tooltip"
+                                [routerLink]="['/employees/salary-setting', item.slug, item.full_name]"><mat-icon>settings</mat-icon></a> -->
+                             <a
+                                matTooltip="Disbursed Detail"
+                                matTooltipClass="example-tooltip-uppercase"
+                                aria-label="Button that shows a red tooltip"
+                                [routerLink]="['/employees/emp-profile/', item.emp_slug]"><mat-icon>visibility</mat-icon></a>
+
+                        </tr>
+                    }
+                }
+                @else {
+                    <tr>
+                        <td colspan="3" style="height: 400px; vertical-align: middle;"> No Data</td>
+                    </tr>
+                }
+
+
+
+            </tbody>
+        </table>
+    </div>
+</div>
+

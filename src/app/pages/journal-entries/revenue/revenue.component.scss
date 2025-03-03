@@ -1,0 +1,11 @@
+td {
+    border-right: 1px solid #cdcdcd;
+}
+td:last-child {
+    border: 0;
+}
+.detl_row > td {
+    background: #37477b !important;
+    color: #fff;
+    border: 1px solid #4FC3F7;
+}

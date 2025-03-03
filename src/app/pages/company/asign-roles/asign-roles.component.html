@@ -1,0 +1,36 @@
+<div class="page_wrapper">
+  <div class="heading_with_btn">
+      <div>
+          <h1 class="heading1"> Assign Roles for <strong>{{name}}</strong></h1>
+      </div>
+  </div>
+@if (role_api.length) {
+    <form action=""[formGroup]="roleForm" (submit)="submit()">
+        <div class="c_shadow input_forms">
+            <div>
+                <mat-form-field appearance="outline">
+                    <mat-label>Toppings</mat-label>
+                    <mat-select
+                    formControlName="roles"
+
+                     multiple>
+                      @for (item of role_api; track item) {
+                        <mat-option [value]="item.id">{{item.name}}</mat-option>
+                      }
+                    </mat-select>
+                    @if (roleForm.get('roles')?.hasError('required') && roleForm.touched) {
+                        <mat-error>Role is <strong>required</strong></mat-error>
+                      }
+                  </mat-form-field>
+            </div>
+            <div>
+
+                    <button mat-raised-button color="primary"
+                    type="submit"
+                    [disabled]="this.roleForm.status == 'INVALID'"
+                  >Assign</button>
+            </div>
+        </div>
+    </form>
+}
+</div>

@@ -1,0 +1,105 @@
+<table *ngIf="data.length" class="table table-striped">
+    <thead>
+      <tr>
+        <th scope="col">#</th>
+        <th scope="col">#</th>
+        <th scope="col">Invoice No</th>
+        <th scope="col">Payment Details</th>
+        <th scope="col">Type</th>
+        <th scope="col">Order Date</th>
+        <th scope="col">Khata</th>
+        <th scope="col">Gst</th>
+        <th scope="col">Grand Total</th>
+        <th scope="col">Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let item of data | paginate: { itemsPerPage: itemsPerPage, currentPage: currentPage, totalItems: totalItems }; let i = index">
+        <td>{{ item.id }}</td>
+        <td>{{ (itemsPerPage * (currentPage - 1)) + i + 1 }}</td>
+        <td>
+          <span class="badge" [ngClass]="{
+            'bg-danger': item.order_type === 'debit',
+            'bg-primary': item.order_type === 'Debit',
+            'bg-warning': item.order_type === 'credit',
+            'bg-success': item.order_type === 'Credit'
+          }">
+            {{ item.invoice_no }}
+          </span>
+        </td>
+        <td>
+          <div *ngFor="let particluler of item.paid_from">
+            <div *ngIf="particluler?.name">{{ particluler.name | uppercase }}</div>
+            <div *ngIf="particluler?.value">{{ particluler.value | currency: 'INR' }}</div>
+          </div>
+        </td>
+        <td [ngClass]="(item.order_type | lowercase) === 'debit' ? 'green' : 'red'">
+          {{ item.order_type | uppercase }}
+        </td>
+        <td>{{ item.order_date }}</td>
+        <td>
+          <div class="vender_dtails" style="text-transform: capitalize;">
+            <div *ngIf="item.name">
+              <span>Name:</span> {{ item.name }}
+            </div>
+            <div *ngIf="item.company_name">
+              <span>Company:</span> {{ item.company_name }}
+            </div>
+            <div *ngIf="item.full_address">
+              <span>Full Address:</span> {{ item.full_address }}
+            </div>
+            <div *ngIf="item.mobile_no">
+              <span>Mobile:</span> {{ item.mobile_no }}
+            </div>
+            <div *ngIf="item.landline">
+              <span>Landline:</span> {{ item.landline }}
+            </div>
+          </div>
+        </td>
+        <td>
+          <div *ngIf="item.sgst > 0 || item.igst > 0">
+            <span>GST:</span>
+            <div>
+              {{ item.sgst > 0 ? convertToNumber(item.cgst) + convertToNumber(item.sgst) : item.igst | currency: 'INR' }}
+            </div>
+          </div>
+          <div *ngIf="item.gst_paid">GST Paid: {{ item.gst_paid | currency: 'INR' }}</div>
+          <div *ngIf="item.gst_payble">GST Payable: {{ item.gst_payble | currency: 'INR' }}</div>
+        </td>
+        <td>{{ item.grand_total | currency: 'INR' }}</td>
+        <td class="action_icon">
+          <button
+            *ngIf="item.order_type.toLowerCase() === 'debit' && !item.is_returned && item.status === 'order_not_approve'"
+            (click)="editOrder.emit({ slug: item.slug, type: 'purchase' })"
+            mat-mini-fab color="accent" matTooltip="Edit Order" aria-label="Edit"
+          >
+            <mat-icon>edit</mat-icon>
+          </button>
+          <button
+            *ngIf="item.order_type.toLowerCase() === 'credit' && !item.is_returned && item.status === 'order_not_approve'"
+            (click)="editOrder.emit({ slug: item.slug, type: 'sale' })"
+            mat-mini-fab color="warn" matTooltip="Edit Order" aria-label="Edit"
+          >
+            <mat-icon>edit</mat-icon>
+          </button>
+          <button
+            *ngIf="!item.auto_approved && item.status === 'order_not_approve'"
+            (click)="approveOrder.emit(item.id)"
+            mat-mini-fab color="primary" matTooltip="Approve Order" aria-label="Approve"
+          >
+            <mat-icon>thumb_up</mat-icon>
+          </button>
+          <a [routerLink]="['/accounting/orders', currentPage, item.slug]" mat-mini-fab class="btn_green" matTooltip="View Order">
+            <mat-icon>visibility</mat-icon>
+          </a>
+        </td>
+      </tr>
+    </tbody>
+    <tfoot *ngIf="data.length && totalItems > itemsPerPage">
+      <tr>
+        <td colspan="10">
+          <pagination-controls (pageChange)="pageChange.emit($event)"></pagination-controls>
+        </td>
+      </tr>
+    </tfoot>
+  </table>

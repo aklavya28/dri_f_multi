@@ -1,0 +1,137 @@
+  <div class="page_wrapper">
+
+   <div class="c_shadow heading_with_btn">
+    <div>
+    <h1 class="heading1">
+      Company
+        <strong style="text-transform: capitalize">Ledgers</strong>
+    </h1>
+    </div>
+    <div class="action_icon">
+      <button
+      class="btn_pink"
+      mat-mini-fab
+      matTooltip="Refresh"
+      matTooltipPosition="above"
+      matTooltipShowDelay="200"
+      (click)="refresh_ledgers()"
+    >
+    <mat-icon>refresh</mat-icon>
+    </button>
+    </div>
+</div>
+
+<div class="search_form  mb-3">
+  <div>
+      <form [formGroup]="trialSearchForm" (submit)="submit()">
+
+          <div>
+            <mat-form-field appearance="outline">
+              <mat-label>Enter Name</mat-label>
+              <input matInput  formControlName="name">
+              @if(trialSearchForm.get('name')?.hasError('required')) {
+                <mat-error>Name  is <strong>required</strong></mat-error>
+              }@else if(trialSearchForm.get('name')?.hasError('maxlength')) {
+                <mat-error>Maxmimum <strong>30 Characters</strong></mat-error>
+              }
+            </mat-form-field>
+          </div>
+
+
+          <button mat-fab color="primary"
+              type="submit"
+              [disabled]="trialSearchForm.status == 'INVALID' "
+          >
+          <mat-icon >search</mat-icon>
+          </button>
+      </form>
+
+  </div>
+</div>
+  @if (ledger_by_name.length) {
+    <div class="c_shadow heading_with_btn">
+      <ul class="l_listing">
+      @for (item of ledger_by_name; track $index) {
+        <li (click)="lDetail(item.slug)"><div>{{item.name}} </div><div class="badge bg-primary"> {{item.lType}}</div></li>
+      }
+      </ul>
+    </div>
+  }
+
+      <!-- <div class="inner_page_table">
+        <mat-tab-group mat-stretch-tabs="false" color="warn" mat-align-tabs="start" (focusChange)="tabsEvent($event)">
+
+            @for (item of ladgers; track $index) {
+                <mat-tab >
+                    <ng-template mat-tab-label>
+                       <div > {{item.name }} <strong>{{item.count}}</strong></div>
+
+
+                    </ng-template>
+
+                    <div class="balance_all"> {{item.name }}: <strong>{{item.balance | currency:"INR"}}</strong></div>
+                    <div class="ladger_container">
+                        @for (item of item.ledgers; track $index) {
+                            @if(item.name == 'Debitors'){
+
+                              <div (click)="lDetail('Debitors')">{{item.name}} <strong>{{ item?.temp_balance | currency:"INR"}}</strong></div>
+                            }@else if (item.name == 'Creditors') {
+                              <div (click)="lDetail('Creditors')">{{item.name}} <strong>{{ item?.temp_balance | currency:"INR"}}</strong></div>
+
+                            }@else {
+                              <div (click)="lDetail(item.slug)">{{item.name}} <strong>{{ item?.temp_balance | currency:"INR"}}</strong></div>
+
+                            }
+
+                        }
+                    </div>
+                </mat-tab>
+
+            }
+
+
+
+
+              </mat-tab-group>
+      </div> -->
+  </div>
+ <div *ngIf="ladgers.length" class="main_ledger">
+  @for (item of ladgers; track $index) {
+    <div class="main_l">
+      <div class="heading_l">
+        <h2 class="heading">{{item.name}} <strong>{{item.count}}</strong></h2>
+        <p>{{ item.balance | currency:"INR" }}</p>
+      </div>
+      <div class="listing_main">
+        @for (l of item.ledgers; track $index) {
+          @if(l.name == 'Debitors'){
+            <div class="list" (click)="lDetail('Debitors')">
+              <div>{{l.name | uppercase}}</div>
+              <div>{{l.temp_balance | currency:"INR" }}</div>
+            </div>
+          }@else if (l.name == 'Creditors') {
+            <div class="list" (click)="lDetail('Creditors')">
+              <div>{{l.name | uppercase}}</div>
+              <div>{{l.temp_balance | currency:"INR" }}</div>
+            </div>
+          }
+          @else {
+            <div class="list" (click)="lDetail(l.slug)">
+              <div>{{l.name | uppercase}}</div>
+              <div>{{l.temp_balance | currency:"INR" }}</div>
+            </div>
+          }
+
+        }
+      </div>
+      </div>
+  }
+
+ </div>
+
+
+
+
+
+
+

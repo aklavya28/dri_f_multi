@@ -1,0 +1,98 @@
+<!-- <div class="wrapper">
+
+    @if (showsidebar) {
+
+        <div class="navbar" >
+            <app-sidebar
+            [options]="options"
+            [menus]="menus()">
+            >
+            <ul *ngFor="let menu of menus()">
+                <li>{{ menu.name }}</li>
+                <ul *ngIf="menu.active">
+                  <li *ngFor="let submenu of menu.submenu" [class.active]="submenu.isActive">
+                    <a [routerLink]="submenu.url">{{ submenu.name }}</a>
+                  </li>
+                </ul>
+              </ul>
+        </app-sidebar>
+        </div>
+    }
+    <div class="right_container">
+        <app-header></app-header>
+        <app-dashboard></app-dashboard>
+        <app-footer></app-footer>
+    </div>
+</div> -->
+
+<div class="naviation">
+  <div class="inner">
+      <div class="nav_ctrl">
+
+        <div class="brand">Dev Digital Era</div>
+        <div><button class="btn" (click)="drawer.toggle()">
+
+          <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="35" height="24" viewBox="0 0 24 24">
+              <path
+                  d="M 2 5 L 2 7 L 22 7 L 22 5 L 2 5 z M 2 11 L 2 13 L 22 13 L 22 11 L 2 11 z M 2 17 L 2 19 L 22 19 L 22 17 L 2 17 z">
+              </path>
+          </svg>
+      </button></div>
+
+      </div>
+      <div class="action_icon">
+          <button class="btn_danger" mat-mini-fab matTooltip="logout" matTooltipShowDelay="200" (click)="logout()"> <mat-icon>logout</mat-icon> </button>
+      </div>
+
+  </div>
+
+</div>
+<mat-drawer-container class="example-container" autosize>
+
+  <mat-drawer #drawer opened="true" class="example-sidenav no_print" mode="side">
+     <div class="user_info">
+        <div>
+          <div>Name:</div>
+          <div>{{this.current_user.name}}</div>
+        </div>
+        <div>
+          <div>Email:</div>
+          <div>{{this.current_user.email}}</div>
+        </div>
+     </div>
+    <div class="navbar" [class.fixed]="isNavbarFixed" >
+      <app-sidebar
+      [options]="options"
+      [menus]="menus()">
+
+      >
+      <ul *ngFor="let menu of menus()">
+          <li>{{ menu.name }}</li>
+          <ul *ngIf="menu.active">
+            <li *ngFor="let submenu of menu.submenu" [class.active]="submenu.isActive">
+              <a [routerLink]="submenu.url">{{ submenu.name }}</a>
+            </li>
+          </ul>
+        </ul>
+  </app-sidebar>
+    </div>
+
+  </mat-drawer>
+
+  <div class="example-sidenav-content">
+
+    <div class="right_container print_width">
+      <!-- <button type="button" mat-button (click)="drawer.toggle()">
+        Toggle sidenav
+      </button>
+      <app-header></app-header> -->
+
+
+
+
+      <app-dashboard></app-dashboard>
+    </div>
+    <app-footer class="no_print"></app-footer>
+  </div>
+
+</mat-drawer-container>

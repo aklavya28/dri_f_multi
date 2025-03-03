@@ -1,0 +1,574 @@
+
+<div class="main_wrapper" *ngIf="order" id="print-section">
+    <div class="c_shadow heading_with_btn mb-4 no_print">
+        <div class="back_button_heading">
+          <div class="backbutton ">
+              <a mat-fab color="primary" [routerLink]="['/accounting/orders/', this.currentPage]">
+              <mat-icon>arrow_back</mat-icon>
+            </a>
+          </div>
+          <h1 class="heading1">
+            INV No. {{order.order.invoice_no}}
+            @if (order.order.order_type === 'Debit') {
+                <strong>Purchase Order</strong>
+            }@else if (order.order.is_returned) {
+                <strong>Return Order</strong>
+            }
+            @else{
+                <strong>Sale Order</strong>
+            }
+        </h1>
+        </div>
+        <div><button mat-raised-button color="primary" class="prit_btn" (click)="download_bill()">Print</button></div>
+
+    </div>
+
+
+
+        <span *ngIf="!order.order.auto_approved" class="badge bg-danger">Not Approved</span>
+    <div  id="data">
+
+        <div class="bill_body">
+            <form [formGroup]="returnProductForm" (submit)="onSubmit()">
+                <div class="table_outer c_shadow">
+                    <table class="table table-responsive">
+                        <tbody>
+                            <tr>
+                                <td colspan="4">
+                                    <div>
+                                        <p><strong>INV No</strong>: {{order.order.invoice_no}}</p>
+                                        <p *ngIf="order.order.vechile_no"><strong>Vechile No</strong>: {{order.order.vechile_no | uppercase}}</p>
+                                    </div>
+                                </td>
+                                <td colspan="5">
+                                    <p><strong>Order Date</strong>: {{order.order.order_date | date}}</p>
+                                </td>
+                            </tr>
+                            <tr class="no_border">
+                                <td colspan="4"> <p><strong>BILL TO</strong>:</p></td>
+                                <td colspan="5"><p *ngIf="order.vendor.name"><strong>BILL FROM</strong></p></td>
+                            </tr>
+                            <tr >
+                                <td colspan="4" style="text-align: center;">
+                                    <div class="bill_to">
+
+
+                                        @if ((order.order?.order_type | lowercase )=== 'debit' ) {
+                                            <h6>{{ order.company.name | uppercase}}</h6>
+                                            <p>{{ order.company.address}}</p>
+                                            <p><Strong>GSTN: </Strong> {{order.company.gst_no}}</p>
+                                    }
+                                    @if ((order.order?.order_type | lowercase) === 'credit' ) {
+                                            <p><strong>Name</strong>:{{order.vendor.name | uppercase}}</p>
+                                            <p *ngIf="order.vendor?.company_name"><strong>Company</strong>: {{order.vendor.company_name}}</p>
+                                            <p *ngIf="order.vendor?.full_address"><strong>Address</strong>: {{order.vendor.full_address}}</p>
+                                            <p *ngIf="order.vendor?.mobile"><strong>Mobile</strong>: {{order.vendor.mobile}}</p>
+                                    }
+                                    </div>
+
+                                </td>
+                                <td colspan="5" style="text-align: center;">
+                                    <div class="bill_from">
+
+                                        @if ((order.order?.order_type | lowercase) === 'debit') {
+                                            <p><strong>Name</strong>:{{order.vendor.name | uppercase}}</p>
+                                            <p *ngIf="order.vendor?.company_name"><strong>Company</strong>: {{order.vendor.company_name}}</p>
+                                            <p *ngIf="order.vendor?.full_address"><strong>Address</strong>: {{order.vendor.full_address}}</p>
+                                            <p *ngIf="order.vendor?.mobile"><strong>Mobile</strong>: {{order.vendor.mobile}}</p>
+                                        }
+                                        @if ((order.order?.order_type | lowercase )=== 'credit' ) {
+                                            <h6>{{ order.company.name | uppercase}}</h6>
+                                            <p>{{ order.company.address}}</p>
+                                            <p><Strong>GSTN: </Strong> {{order.company.gst_no}}</p>
+
+                                    }
+
+
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr *ngIf="order.order?.ack_no || order.order?.irn_no ">
+                                <td colspan="4" style="text-align: center;">
+                                    @if (order.order.ack_no) {
+                                    <span><strong>ACK No: </strong>{{order.order.ack_no}} </span>
+                                    }
+
+                                </td>
+                                <td colspan="5" style="text-align: center;">
+                                    @if (order.order.irn_no) {
+                                        <span><strong>IRN No: </strong>{{order.order.irn_no}} </span>
+                                        }
+                                </td>
+                            </tr>
+                            @if (order.products.length) {
+                            <tr>
+                                <th>#</th>
+                                <th>
+                                    Item: <br>
+                                    Description
+                                </th>
+                                <th>HSN/SAC</th>
+                                <th>Qty</th>
+                                <td>Price/ Unit</td>
+                                <td>Discount</td>
+                                <td>Taxable</td>
+                                <th>GST % <br> Amount</th>
+
+                                <th>Amount</th>
+                            </tr>
+
+
+
+
+
+                                <ng-container formArrayName="products" *ngFor="let item of  productsArray.controls; let i = index">
+                                    <ng-container [formGroupName]="i">
+                                        <!-- <tr>
+                                            <td colspan="7">
+                                                <pre>{{ApiProducts[i] | json}}</pre>
+                                            </td>
+                                        </tr> -->
+                                        <tr >
+                                            <td>
+                                                   <!-- {{ApiProducts[i] | json}} -->
+                                                    {{i+1}}
+
+                                                    <!-- {{ApiProducts[i].id}} -->
+                                                    @if (order.order.status === 'processed' ? true : false ) {
+                                                        <mat-checkbox *ngIf="!ApiProducts[i].is_returned" class="no_print" color="primary"  formControlName="selected" (change)="onCheckboxChange(i, ApiProducts[i])"></mat-checkbox>
+                                                    }
+                                                   <!-- <input type="checkbox" " /> -->
+
+                                            </td>
+                                            <td>
+
+                                                <div *ngIf="ApiProducts[i].product_description?.name"><strong>Name:</strong>  {{ApiProducts[i].product_description?.name}}</div>
+                                                <div *ngIf="ApiProducts[i].product_description?.description">  <strong>Description: </strong> {{ApiProducts[i].product_description?.description}}</div>
+                                            </td>
+                                            <td>
+                                                {{ApiProducts[i].product_description?.hsn_sac}}
+                                            </td>
+
+                                            <td>
+                                                {{ApiProducts[i].no_of_unit}} <strong>{{ApiProducts[i].product_description?.unit}}</strong>
+                                            </td>
+                                            <td>
+                                                {{ApiProducts[i].unit_price | currency:"INR"}}
+                                            </td>
+                                            <td>
+                                                {{ ApiProducts[i].discount | currency:"INR"}}
+                                            </td>
+                                            <!-- <td>  {{((ApiProducts[i].unit_price * ApiProducts[i].no_of_unit) -  ApiProducts[i].discount) | currency:"INR"}}</td> -->
+                                            <td>  {{ApiProducts[i].taxable | currency:"INR"}}</td>
+                                            <td>
+
+                                                @if (ApiProducts[i].product_description) {
+                                                    <div *ngIf="!order?.order.is_igst">
+                                                        SGST: {{ApiProducts[i].product_description.gst/2}} %<br>
+                                                        {{(ApiProducts[i].gst/2) | currency:"INR"}}
+                                                    </div>
+                                                    <div *ngIf="!order?.order.is_igst">
+                                                        CGST: {{ApiProducts[i].product_description.gst/2}} %<br>
+                                                        {{(ApiProducts[i].gst/2) | currency:"INR"}}
+                                                    </div>
+                                                    <div *ngIf="order?.order.is_igst">
+                                                        IGST: {{ApiProducts[i].product_description.gst}} %<br>
+                                                        {{ApiProducts[i].gst | currency:"INR"}}
+                                                    </div>
+
+                                                }
+                                            </td>
+
+                                            <td>
+                                              <strong>  {{ApiProducts[i].total | currency:"INR"}}</strong>
+                                            </td>
+                                        </tr>
+                                        <tr *ngIf="item.get('selected')?.value" class="no_print">
+                                            <td colspan="9" >
+                                                <div class="retrun_form">
+
+                                                    <div>
+                                                        <mat-form-field class="example-full-width">
+                                                            <mat-label> Return quantity</mat-label>
+                                                            <input type="number"
+                                                            (change)="retrunQtyChange()"
+                                                            matInput
+                                                                formControlName="return_quantity"
+                                                            >
+                                                            @if(returnProductForm.get('products')?.get(i.toString())?.get('return_quantity')?.hasError('required')) {
+                                                                <mat-error> Return quantity is <strong>required</strong></mat-error>
+                                                              }
+                                                              @if(returnProductForm.get('products')?.get(i.toString())?.get('return_quantity')?.hasError('min')) {
+                                                                <mat-error> Return quantity is not lessthen <strong>1</strong></mat-error>
+                                                              }
+                                                              @if(returnProductForm.get('products')?.get(i.toString())?.get('return_quantity')?.hasError('max')) {
+                                                                <mat-error> Return quantity is not morethan <strong>{{returnProductForm.get('products')?.get(i.toString())?.get('return_quantity')?.errors?.["max"].max }}</strong></mat-error>
+                                                              }
+
+                                                          </mat-form-field>
+                                                          <!-- {{this.sold_poducts}}
+                                                          {{returnProductForm.get('products')?.get(i.toString())?.get('return_quantity')?.errors | json}} -->
+
+                                                    </div>
+                                                    <div>
+                                                        <mat-form-field class="example-full-width">
+                                                            <mat-label>Reason</mat-label>
+                                                            <input
+                                                            maxlength="100"
+                                                            matInput
+                                                                formControlName="remarks"
+                                                                (change)="retrunQtyChange()"
+                                                            >
+                                                            @if(returnProductForm.get('products')?.get(i.toString())?.get('remarks')?.hasError('required')) {
+                                                                <mat-error> Return quantity is <strong>required</strong></mat-error>
+                                                              }
+
+
+                                                          </mat-form-field>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                        </tr>
+
+                                    </ng-container>
+                                </ng-container>
+                            }
+
+
+
+                            @if (order.services.length) {
+                                <tr >
+                                    <td colspan="9"><h4>Services</h4></td>
+                                </tr>
+                                <tr>
+                                  <th>#</th>
+                                  <th colspan="5">Product Name</th>
+
+                                  <th>Taxable Amount</th>
+                                  <th>GST</th>
+                                  <th>Amount</th>
+                                </tr>
+                                @for (item of order.services; track $index) {
+                                  <tr>
+                                    <td>{{ $index + 1 }}</td>
+                                    <td  colspan="5">{{ item.name | uppercase}}</td>
+                                    <td>{{ item.amount | currency:"INR"}}</td>
+                                    <td>
+
+
+                                            <div *ngIf="!order?.order.is_igst">
+                                                CGST: {{item?.sale_service.gst/2}} %<br>
+                                                {{(item.gst/2) | currency:"INR"}}
+                                            </div>
+                                            <div *ngIf="order?.order.is_igst">
+                                                IGST: {{item?.sale_service.gst}} %<br>
+                                                {{ item.gst | currency:"INR"}}
+                                            </div>
+                                            <div *ngIf="!order?.order.is_igst">
+                                                SGST: {{item?.sale_service.gst/2}} %<br>
+                                                {{(item.gst/2) | currency:"INR"}}
+                                            </div>
+
+
+                                    </td>
+
+                                    <td>{{ item.total | currency:"INR"}}</td>
+                                  </tr>
+                                }
+                              }
+                              @if (order.order?.assets.length) {
+                                <tr >
+                                    <td colspan="9"><h4>Assets</h4></td>
+                                </tr>
+                                <tr>
+                                  <th>#</th>
+                                  <th colspan="2">Product Name</th>
+                                  <th>HSN</th>
+                                  <th>No of Units</th>
+                                  <th>No of Price</th>
+                                  <th>Taxable Amount</th>
+                                  <th>GST</th>
+                                  <th>Amount</th>
+                                </tr>
+                                @for (item of order.order.assets; track $index) {
+                                  <tr>
+                                    <td>{{ $index + 1 }}</td>
+                                    <td  colspan="2">{{ item.name | uppercase}}</td>
+                                    <td>{{ item.hsn}}</td>
+                                    <td  >{{ item.no_of_unit }}</td>
+                                    <td  >{{ item.unit_amount }}</td>
+                                    <td>{{ (item.no_of_unit * item.unit_amount) | currency:"INR"}}</td>
+                                    <td>
+                                            <div *ngIf="!order?.order.is_igst">
+                                                CGST: {{item.gst/2}} %<br>
+                                                {{(item.gst_amount/2) | currency:"INR"}}
+                                            </div>
+                                            <div *ngIf="order?.order.is_igst">
+                                                IGST: {{item?.gst}} %<br>
+                                                {{ item.gst_amount | currency:"INR"}}
+                                            </div>
+                                            <div *ngIf="!order?.order.is_igst">
+                                                SGST: {{item?.gst/2}} %<br>
+                                                {{(item.gst_amount/2) | currency:"INR"}}
+                                            </div>
+
+
+                                    </td>
+
+                                    <td>{{ item.total | currency:"INR"}}</td>
+                                  </tr>
+                                }
+                              }
+
+
+
+                            <tr class="foter_tr">
+                                <th colspan="8">Taxable</th>
+                                <th>{{(order.product_taxable + order.ser_total + order.order?.assets_total) | currency:"INR"}}</th>
+                            </tr>
+                            <tr class="foter_tr">
+                                <th colspan="8">Discount</th>
+                                <th>{{order.order.discount | currency:"INR"}}</th>
+                            </tr>
+                            <tr class="foter_tr">
+                                <th colspan="8">GST</th>
+                                <th>{{(order.order.order_type.toLowerCase() == 'credit'? order.order.gst_payble : order.order.gst_paid) | currency:"INR"}}</th>
+                            </tr>
+
+                            <tr *ngIf="order.order.round_off_amount !== 0" class="foter_tr">
+                                <th colspan="8">Round Off</th>
+                                <th>{{order.order.round_off_amount | currency:"INR"}}</th>
+                            </tr>
+                            <tr *ngIf="order.ser_total !== 0" class="foter_tr">
+                                <th colspan="8">Service Charges</th>
+                                <th>{{order.ser_total | currency:"INR"}}</th>
+                            </tr>
+                            <tr *ngIf="order.order?.assets_total !== 0" class="foter_tr">
+                                <th colspan="8">Assets</th>
+                                <th>{{order.order?.assets_total | currency:"INR"}}</th>
+                            </tr>
+                            <tr class="foter_tr">
+                                <th colspan="8">Grand Total</th>
+                                <th>{{order.order.grand_total | currency:"INR"}}</th>
+                            </tr>
+
+
+                            @if(returnProductData[0]?.items.length ){
+
+                                <tr class="no_print"><td colspan="9"> <h2 class="heading2">Return <strong>Overview</strong></h2></td></tr>
+                                <tr class="return_order no_print">
+                                    <th>#</th>
+                                    <th>
+                                        Item: <br>
+                                        Description
+                                    </th>
+                                    <th>HSN/SAC</th>
+                                    <th>Qty</th>
+                                    <td>Price/ Unit</td>
+                                    <td>Discount</td>
+                                    <td>Taxable</td>
+                                    <th>GST % <br> Amount</th>
+
+                                    <th>Amount</th>
+                                </tr>
+                                @for (item of returnProductData[0].items; track $index) {
+
+                                    <tr  class="return_order no_print">
+                                        <td>
+                                                {{$index+1}}
+                                        </td>
+                                        <td>
+
+                                            <div *ngIf="item.product_description?.name"><strong>Name:</strong>  {{item.product_description?.name}}</div>
+                                            <div *ngIf="item.product_description?.description">  <strong>Description: </strong> {{item.product_description?.description}}</div>
+                                        </td>
+                                        <td>
+                                            {{item.product_description?.hsn_sac}}
+                                        </td>
+                                        <td>
+                                            {{item.no_of_unit}} <strong>{{item.product_description?.unit}}</strong>
+                                        </td>
+
+                                        <td>
+                                            {{item.unit_price | currency:"INR"}} <br>
+
+                                        </td>
+                                        <td>
+                                            {{item.discount | currency:"INR"}} <br>
+
+                                        </td>
+                                        <td>
+                                            {{item.unit_price *item.net_unit_price | currency:"INR"}}
+                                        </td>
+                                        <td>
+
+                                            @if (item.product_description) {
+
+                                                <div *ngIf="item.gst > 0">
+                                                    CGST: {{item.product_description.gst}} %<br>
+                                                    {{item.gst | currency:"INR"}}
+                                                </div>
+                                                <div *ngIf="item.i_gst > 0">
+                                                    IGST: {{item.product_description.gst}} %<br>
+                                                    {{item.i_gst | currency:"INR"}}
+                                                </div>
+                                                <div *ngIf="item.s_gst > 0">
+                                                    SGST: {{item.product_description.gst/2}} %<br>
+                                                    {{item.s_gst | currency:"INR"}}
+                                                </div>
+
+                                            }
+                                        </td>
+
+                                        <td>
+                                          <strong>  {{item.total | currency:"INR"}}</strong>
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                            @if(returnProductData[0]?.items.length ){
+
+                                <tr class="foter_tr return_order no_print">
+                                    <th colspan="8">GST</th>
+                                    <th>{{returnProductData[0]?.grand_totals.gst | currency:"INR"}}</th>
+                                </tr>
+                                <tr class="foter_tr return_order no_print">
+                                    <th colspan="8">Discount</th>
+                                    <th>{{returnProductData[0]?.grand_totals.discount | currency:"INR"}}</th>
+                                </tr>
+                                <tr class="foter_tr return_order no_print">
+                                    <th colspan="8">Round Off</th>
+                                    <th>{{returnProductData[0]?.grand_totals.round_off_amount | currency:"INR"}}</th>
+                                </tr>
+                                <tr class="foter_tr return_order no_print">
+                                    <th colspan="8">Grand Total</th>
+                                    <th>{{returnProductData[0]?.grand_totals.total | currency:"INR"}}</th>
+                                </tr>
+                            }
+                        </tbody>
+
+                    </table>
+                </div>
+
+
+            <div *ngIf="returnProductData[0]?.items.length" class="input_forms2_main mt-4 no_print">
+                <div class="c_shadow input_forms2">
+
+                  <h2>Payment <strong>Information</strong></h2>
+                  <div>
+                    <mat-form-field>
+                      <mat-label>Credit From</mat-label>
+                      <mat-select
+                      formControlName="credit_from"
+                      multiple
+                      (valueChange)="creditFromOnChange($event, order.order.order_type ? order.order.order_type : 'null')"
+                      >
+                      @if(liquid.length){
+                        @for (item of liquid; track $index) {
+                          <mat-option  [value]="item.name" >{{item.name | uppercase}} Bal: {{item.balance | currency:"INR"}}</mat-option>
+                        }
+                      }
+                      @if(order.order.order_type === 'debit'){
+                        <mat-option value="debtor">Debit</mat-option>
+                    }
+                    @else{
+                        <mat-option value="creditor">Credit</mat-option>
+                    }
+
+
+                    </mat-select>
+                    <!-- {{newOrderForm.get('credit_from')?.value | json}} -->
+                    @if (returnProductForm.get('credit_from')?.hasError('required')) {
+                        <mat-error>Credit type is <strong>required</strong></mat-error>
+                      }
+                    </mat-form-field>
+
+                  </div>
+
+                    <ng-container formArrayName="credit_fromInputs">
+                      <div *ngFor="let group of credit_fromInputs.controls; let i = index" [formGroupName]="i">
+                        <mat-form-field appearance="fill">
+                          <mat-label>Amount For {{ group.get('name')?.value | uppercase}}</mat-label>
+                          <input matInput formControlName="value" maxlength="11" required>
+                          <mat-error *ngIf="group.get('value')?.hasError('required')">This field is required</mat-error>
+                          <mat-error *ngIf="group.get('value')?.hasError('invalidDigit')">Invalid <strong>Digit</strong></mat-error>
+                        </mat-form-field>
+                      </div>
+                    </ng-container>
+                </div>
+                <div class="c_shadow input_forms2 no_print">
+                    <h2>Round <strong>Order</strong></h2>
+                    <div>
+                        <mat-checkbox class="example-margin"
+                        formControlName="round_off"
+                        color="primary"
+                        (change)="roundOffChange($event.checked)"
+                        >Round Off Order</mat-checkbox>
+
+                    </div>
+                    <div class="chares_remarks">
+                        <div *ngIf="returnProductForm.get('round_off')?.value">
+
+                          <mat-form-field>
+                            <mat-label>Round Off Amount</mat-label>
+                            <input matInput
+                            formControlName="round_off_amt"
+
+                            >
+                            @if (returnProductForm.get('round_off_amt')?.hasError('required')) {
+                              <mat-error>Amount is <strong>required</strong></mat-error>
+                            }
+                            @else if (returnProductForm.get('round_off_amt')?.hasError('invalidDigit')) {
+                              <mat-error>Only Valid <strong>digits</strong></mat-error>
+                            }@else if (returnProductForm.get('round_off_amt')?.hasError('max')) {
+                              <mat-error>Maximum <strong>{{ 500 | currency:"INR"}}</strong></mat-error>
+                            }
+
+                          </mat-form-field>
+
+                          {{returnProductForm.get('round_off_amt')?.value}}
+                        </div>
+
+
+                      </div>
+                </div>
+              </div>
+              @if(matchTotal.length){
+                <div class="error no_print">
+                    <p>{{matchTotal[0]}}</p>
+                </div>
+                }
+              <div  *ngIf="returnProductData[0]?.items.length"  class="input_forms2_main mt-4 no_print">
+                <div class="c_shadow input_forms2">
+                  <h2>Return Order <strong>Information</strong></h2>
+                  <div>
+                    <mat-form-field class="example-full-width">
+                        <mat-label>Order Type</mat-label>
+                        <input matInput
+                            formControlName="order_type"
+
+                        >
+                      </mat-form-field>
+                  </div>
+
+                </div>
+              </div>
+
+              @if (returnProductData.length ) {
+
+                <button mat-raised-button color="primary"
+                class="no_print"
+                  type="submit"
+                  [disabled]="this.returnProductForm.status == 'INVALID' "
+                >Save</button>
+              }
+        </form>
+        </div>
+    </div>
+
+</div>
+
+    <!-- {{returnProductForm?.value ? (returnProductForm?.value | json) : null}} -->
+
+
+<!-- <button (click)="printDocument()">Print Document</button> -->
